@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="RabbitMQ,AMQP,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="这篇文章是根据自己的理解,讲解有关 RabbitMQ 的一些基础知识.另外包括部署,基本设置,信道,路由交换,队列及等等基础概念. 这些将在后续文章中一一道来 什么是RabbitMQ?惯例开头,要理解一个工具,必须先了解这个工具是干什么的,可以用在什么的地方,这样才能更好的使用. RabbitMQ 本质是一个实现了 AMQP 协议的一个工具,与其相似的还有 RocketMQ, Kafka, Act">
+<meta name="keywords" content="RabbitMQ,AMQP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="有关 RabbitMQ 快速部署与使用">
+<meta property="og:url" content="https://www.kilii.cc/2019/07/04/有关RabbitMQ相关入门基础知识总结/index.html">
+<meta property="og:site_name" content="Kilii&#39;s Blog">
+<meta property="og:description" content="这篇文章是根据自己的理解,讲解有关 RabbitMQ 的一些基础知识.另外包括部署,基本设置,信道,路由交换,队列及等等基础概念. 这些将在后续文章中一一道来 什么是RabbitMQ?惯例开头,要理解一个工具,必须先了解这个工具是干什么的,可以用在什么的地方,这样才能更好的使用. RabbitMQ 本质是一个实现了 AMQP 协议的一个工具,与其相似的还有 RocketMQ, Kafka, Act">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-07-31T07:44:16.620Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="有关 RabbitMQ 快速部署与使用">
+<meta name="twitter:description" content="这篇文章是根据自己的理解,讲解有关 RabbitMQ 的一些基础知识.另外包括部署,基本设置,信道,路由交换,队列及等等基础概念. 这些将在后续文章中一一道来 什么是RabbitMQ?惯例开头,要理解一个工具,必须先了解这个工具是干什么的,可以用在什么的地方,这样才能更好的使用. RabbitMQ 本质是一个实现了 AMQP 协议的一个工具,与其相似的还有 RocketMQ, Kafka, Act">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.kilii.cc/2019/07/04/有关RabbitMQ相关入门基础知识总结/">
+
+
+
+
+
+  <title>有关 RabbitMQ 快速部署与使用 | Kilii's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kilii's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.kilii.cc/2019/07/04/有关RabbitMQ相关入门基础知识总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="KiLii">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="http://u2.zhenyouliao.com/images/20140604/65be2bf6-766a-448c-8ed4-5493ab976be8.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kilii's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">有关 RabbitMQ 快速部署与使用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-04T14:48:08+08:00">
+                2019-07-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这篇文章是根据自己的理解,讲解有关 RabbitMQ 的一些基础知识.另外包括部署,基本设置,信道,路由交换,队列及等等基础概念. 这些将在后续文章中一一道来</p>
+<h2 id="什么是RabbitMQ"><a href="#什么是RabbitMQ" class="headerlink" title="什么是RabbitMQ?"></a>什么是RabbitMQ?</h2><p>惯例开头,要理解一个工具,必须先了解这个工具是干什么的,可以用在什么的地方,这样才能更好的使用.</p>
+<p>RabbitMQ 本质是一个实现了 <a href="https://zh.wikipedia.org/wiki/%E9%AB%98%E7%BA%A7%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E5%8D%8F%E8%AE%AE" target="_blank" rel="noopener">AMQP</a> 协议的一个工具,与其相似的还有 RocketMQ, Kafka, ActiveMQ, ZreoMQ 等等.其主要解决的问题是可以安全可靠的向应用之间传递消息,以便不同应用,不同语言的程序之间的消息传递.</p>
+<a id="more"></a>
+
+<p>我们知道能完成不同应用之间消息传递方式有很多,比如 HTTP,又比如数据库.但对比与 AMQP 来说,它比 HTTP 更安全,又比数据库更轻量,更方便.并且还支持多种链路协议,这样使得消息队列能够实现多种多样的消息传递方式.所以现如今消息队列广泛的使用在项目开发中,作为微服务之间的通讯或项目之间的解耦.</p>
+<p>这次就简单的说一下基于 AMQP 协议,以 erlang 开发的消息队列中间件 RabbitMQ</p>
+<h2 id="如何快速部署"><a href="#如何快速部署" class="headerlink" title="如何快速部署"></a>如何快速部署</h2><p>为了快速演示,建议使用 Docker 部署.Docker Hub 上也有关于如何部署 RabbitMQ 的<a href="https://hub.docker.com/_/rabbitmq" target="_blank" rel="noopener">文档</a></p>
+<p>此处我们选用带有可视化操作面板的版本,</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 拉取镜像</span><br><span class="line">docker pull rabbitmq:3.7.15-management</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 运行容器</span><br><span class="line">docker run --name myRabbit -d -p 5672:5672 -p 15672:15672 rabbitmq:3.7.15-management</span><br></pre></td></tr></table></figure>
+
+<p>仅仅两行命令,就启动了一个 RabbitMQ. 那么上面 <code>docker run</code> 命令,开启了两个端口映射,分别是</p>
+<ul>
+<li><code>5672</code>(默认服务端口),传递接收消息此本端口完成</li>
+<li><code>15672</code> (可视化面板端口), 由于是在本地开启的容器,所以访问 <code>127.0.0.1:15672</code>, 即可访问管理面板</li>
+<li>默认登录账号为: <code>guest</code> 密码: <code>guest</code></li>
+</ul>
+<p>可以登录管理面板观察下各个按钮及栏目</p>
+<h2 id="快速使用"><a href="#快速使用" class="headerlink" title="快速使用"></a>快速使用</h2><p>那么在一个消息的收发过程中,必须有发送者和接受者, 在 MQ 中我们称之为<code>生产者(producer)</code>, <code>消费者(consumer)</code>,非常形象</p>
+<p>所以我们的示例中也是需要 producer 与 consumer 两份代码. <a href="https://www.rabbitmq.com/tutorials/tutorial-one-php.html" target="_blank" rel="noopener">代码参照</a>官方示例文档</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// consumer.php</span></span><br><span class="line"><span class="keyword">require_once</span> <span class="string">"vendor/autoload.php"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">PhpAmqpLib</span>\<span class="title">Connection</span>\<span class="title">AMQPConnection</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">PhpAmqpLib</span>\<span class="title">Exception</span>\<span class="title">AMQPException</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 创建连接</span></span><br><span class="line">    $conn = <span class="keyword">new</span> AMQPConnection(<span class="string">"127.0.0.1"</span>, <span class="number">5672</span>, <span class="string">"guest"</span>, <span class="string">"guest"</span>);</span><br><span class="line">    <span class="comment">// 创建信道</span></span><br><span class="line">    $chan = $conn-&gt;channel();</span><br><span class="line">    <span class="comment">// 声明队列</span></span><br><span class="line">    $chan-&gt;queue_declare(<span class="string">"testQueue"</span>,<span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建回调函数</span></span><br><span class="line">    $callback = <span class="function"><span class="keyword">function</span> <span class="params">($msg)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">'[√] Received: '</span>, $msg-&gt;body, <span class="string">"\n"</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="comment">// 消费队列中的消息</span></span><br><span class="line">    $chan-&gt;basic_consume(<span class="string">'testQueue'</span>, <span class="string">''</span>, <span class="keyword">false</span>, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, $callback);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 确认回调是否执行完毕,否则等待</span></span><br><span class="line">    <span class="keyword">while</span> (count($chan-&gt;callbacks)) &#123;</span><br><span class="line">        $chan-&gt;wait();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125; <span class="keyword">catch</span> (AMQPException $e) &#123;</span><br><span class="line">    <span class="keyword">echo</span> sprintf(<span class="string">"[x] Received Error:%s %s, line %s"</span> . PHP_EOL, $e-&gt;getCode(), $e-&gt;getMessage(), $e-&gt;getLine());</span><br><span class="line">&#125; <span class="keyword">catch</span> (\Throwable $th) &#123;</span><br><span class="line">    <span class="keyword">echo</span> sprintf(<span class="string">"[x] Received Error:%s %s, line %s"</span> . PHP_EOL, $th-&gt;getCode(), $th-&gt;getMessage(), $th-&gt;getLine());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后使用 <code>php-cli</code> 运行起来: </p>
+<blockquote>
+<p>php comsumer.php</p>
+</blockquote>
+<p>接着程序会一直阻塞运行等待消息的到来.</p>
+<p>下面是 <code>producer.php</code> 的编写</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// producer.php</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">require_once</span> <span class="string">"vendor/autoload.php"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">PhpAmqpLib</span>\<span class="title">Connection</span>\<span class="title">AMQPConnection</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">PhpAmqpLib</span>\<span class="title">Message</span>\<span class="title">AMQPMessage</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">PhpAmqpLib</span>\<span class="title">Exception</span>\<span class="title">AMQPException</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    $conn = <span class="keyword">new</span> AMQPConnection(<span class="string">"127.0.0.1"</span>, <span class="number">5672</span>, <span class="string">"guest"</span>, <span class="string">"guest"</span>);</span><br><span class="line"></span><br><span class="line">    $chan = $conn-&gt;channel();</span><br><span class="line">    $chan-&gt;queue_declare(<span class="string">"testQueue"</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>);</span><br><span class="line"></span><br><span class="line">    $str = <span class="string">"hello, this is test"</span>;</span><br><span class="line">    $msg = <span class="keyword">new</span> AMQPMessage($str);</span><br><span class="line"></span><br><span class="line">    $chan-&gt;basic_publish($msg, <span class="string">""</span>, <span class="string">"testQueue"</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"[√] Sent 'Hello World!'\n"</span>;</span><br><span class="line">&#125; <span class="keyword">catch</span> (AMQPException $e) &#123;</span><br><span class="line">    <span class="keyword">echo</span> sprintf(<span class="string">"[x] Sent Error:%s %s, line %s"</span> . PHP_EOL, $e-&gt;getCode(), $e-&gt;getMessage(), $e-&gt;getLine());</span><br><span class="line">&#125; <span class="keyword">catch</span> (\Throwable $th) &#123;</span><br><span class="line">    <span class="keyword">echo</span> sprintf(<span class="string">"[x] Sent Error:%s %s, line %s"</span> . PHP_EOL, $th-&gt;getCode(), $th-&gt;getMessage(), $th-&gt;getLine());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>开启另一个控制台, 并运行:</p>
+<blockquote>
+<p>php producer.php<br>即可看到效果</p>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本篇文章,暂时仅对 RabbitMQ 的安装,以及在 PHP 上的使用,做了简要介绍.相关的更深入解析文章后续会陆续发布</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/RabbitMQ/" rel="tag"># RabbitMQ</a>
+          
+            <a href="/tags/AMQP/" rel="tag"># AMQP</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/04/有关Web身份验证与JWT认证探究与实现/" rel="next" title="有关Web身份验证与JWT认证探究与实现">
+                <i class="fa fa-chevron-left"></i> 有关Web身份验证与JWT认证探究与实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/05/PHP-实现单向链表/" rel="prev" title="PHP 实现单向链表">
+                PHP 实现单向链表 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://u2.zhenyouliao.com/images/20140604/65be2bf6-766a-448c-8ed4-5493ab976be8.jpg" alt="KiLii">
+            
+              <p class="site-author-name" itemprop="name">KiLii</p>
+              <p class="site-description motion-element" itemprop="description">Kilii的博客，主要分享PHP，web开发等技术相关文章。和对音乐，生活的一些思考</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是RabbitMQ"><span class="nav-number">1.</span> <span class="nav-text">什么是RabbitMQ?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何快速部署"><span class="nav-number">2.</span> <span class="nav-text">如何快速部署</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#快速使用"><span class="nav-number">3.</span> <span class="nav-text">快速使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">KiLii</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

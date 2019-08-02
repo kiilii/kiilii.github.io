@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="链表,数据结构,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="数据结构是每一个好的程序员的必修课程,这回乘着闭关修炼的这段时间,好好整理下关于数据结构的相关只是.本次就以链表开始说起. 什么的链表链表与数组不一样,在 C, java 中 数组的初始化是需要声明长度,以及每个元素的大小的.虽然在书写伤可以简写,但最终编译器在初始化时,也会隐式完成声明.每个数组在声明完成后,其占用内存地址是连续的,占用内存大小不可改变. 链表是一种数据结构,一个基础的链表是由多">
+<meta name="keywords" content="链表,数据结构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP 实现单向链表">
+<meta property="og:url" content="https://www.kilii.cc/2019/07/05/PHP-实现单向链表/index.html">
+<meta property="og:site_name" content="Kilii&#39;s Blog">
+<meta property="og:description" content="数据结构是每一个好的程序员的必修课程,这回乘着闭关修炼的这段时间,好好整理下关于数据结构的相关只是.本次就以链表开始说起. 什么的链表链表与数组不一样,在 C, java 中 数组的初始化是需要声明长度,以及每个元素的大小的.虽然在书写伤可以简写,但最终编译器在初始化时,也会隐式完成声明.每个数组在声明完成后,其占用内存地址是连续的,占用内存大小不可改变. 链表是一种数据结构,一个基础的链表是由多">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Singly-linked-list.svg/408px-Singly-linked-list.svg.png">
+<meta property="og:updated_time" content="2019-07-31T07:44:16.621Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PHP 实现单向链表">
+<meta name="twitter:description" content="数据结构是每一个好的程序员的必修课程,这回乘着闭关修炼的这段时间,好好整理下关于数据结构的相关只是.本次就以链表开始说起. 什么的链表链表与数组不一样,在 C, java 中 数组的初始化是需要声明长度,以及每个元素的大小的.虽然在书写伤可以简写,但最终编译器在初始化时,也会隐式完成声明.每个数组在声明完成后,其占用内存地址是连续的,占用内存大小不可改变. 链表是一种数据结构,一个基础的链表是由多">
+<meta name="twitter:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Singly-linked-list.svg/408px-Singly-linked-list.svg.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.kilii.cc/2019/07/05/PHP-实现单向链表/">
+
+
+
+
+
+  <title>PHP 实现单向链表 | Kilii's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kilii's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.kilii.cc/2019/07/05/PHP-实现单向链表/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="KiLii">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="http://u2.zhenyouliao.com/images/20140604/65be2bf6-766a-448c-8ed4-5493ab976be8.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kilii's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">PHP 实现单向链表</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-05T00:24:05+08:00">
+                2019-07-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>数据结构是每一个好的程序员的必修课程,这回乘着闭关修炼的这段时间,好好整理下关于数据结构的相关只是.本次就以链表开始说起.</p>
+<h2 id="什么的链表"><a href="#什么的链表" class="headerlink" title="什么的链表"></a>什么的链表</h2><p>链表与数组不一样,在 C, java 中 数组的初始化是需要声明长度,以及每个元素的大小的.虽然在书写伤可以简写,但最终编译器在初始化时,也会隐式完成声明.每个数组在声明完成后,其占用内存地址是连续的,占用内存大小不可改变.</p>
+<p><a href="https://zh.wikipedia.org/wiki/%E9%93%BE%E8%A1%A8" target="_blank" rel="noopener">链表</a>是一种数据结构,一个基础的链表是由多个单节点连接在一起组成的,在内存地址中非连续的线性表.每个节点至少包含值字段,以及指向下一个节点内存地址的指针坐标.</p>
+<p>链表的优点相对于数组来说,链表更加灵活.数组需要知道元素的大小,而链表不需要,并且链表的每个节点都可以是不同类型,空间利用更加灵活.</p>
+<a id="more"></a>
+<p>但由于链表是根据存放在节点中的指针地址寻找下一个节点的,所以无法完成像数组的随机读取功能,并且每个节点多存放了指针地址,内存开销相应比数组稍大.</p>
+<h2 id="连接结构剖析"><a href="#连接结构剖析" class="headerlink" title="连接结构剖析"></a>连接结构剖析</h2><p>在上一节介绍中描述中我们知道,链表是由节点构成的.每一个节点至少包含<code>值</code>与<code>指针地址</code>,下面我们应用 wiki 百科中的图片作为描述:</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Singly-linked-list.svg/408px-Singly-linked-list.svg.png" alt="avatar"></p>
+<p>上图中每组都包含<code>值</code>与<code>指针地址</code>,指针地址指向下一个节点的内存地址,这样程序在查询到节点时,就知道下一个节点在那个地方,整个结构犹如链条一般.因此得名链表</p>
+<p>当然链表也不仅仅只有一种,还有双向链表,循环链表,十字链表等等.wiki 中有相关描述 <a href="https://zh.wikipedia.org/wiki/%E9%93%BE%E8%A1%A8" target="_blank" rel="noopener">链接地址</a>.本文由于篇幅限制,不做过多叙述.更多结构会在今后的文章中看到</p>
+<h2 id="在-php-中完成链表的实现"><a href="#在-php-中完成链表的实现" class="headerlink" title="在 php 中完成链表的实现"></a>在 php 中完成链表的实现</h2><p>大多数 php 开发者都很少有使用到数据结构,基本都是使用 PHP 的数组结构,虽说 php 数组是由 Hash table与list 组成的特殊结构. 但大多数 php 程序员都不太清楚.</p>
+<p>另外 php 的官方的标准库 Spl 中也有各种写好的结构.类似 SplQueue SplHeap SplStack SplDoublyLinkedList,各种结构数不胜数,这些后续在讲解,这里先做一个简单的 PHP 实现</p>
+<p>那么首先链表是由节点组成的,所以我们需要定义一个节点结构.为了方便,我们就简单的实现一个单链表:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 单链表节点</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ListNode</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">// 节点值</span></span><br><span class="line">    <span class="keyword">public</span> $data = <span class="keyword">null</span>;</span><br><span class="line">    <span class="comment">// 下一个节点</span></span><br><span class="line">    <span class="keyword">public</span> $next = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($data)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;data = $data;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后写一个简单的链表操作类</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ListTest</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $next = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 添加节点</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">attach</span><span class="params">($data)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 如果为 null 则添加链表头</span></span><br><span class="line">        <span class="keyword">if</span> ( is_null(<span class="keyword">$this</span>-&gt;next) ) &#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;next = <span class="keyword">new</span> ListNode($data);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">$this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 如果非空,则循环至最后一个节点</span></span><br><span class="line">        $nextNode = <span class="keyword">$this</span>-&gt;next;</span><br><span class="line">       </span><br><span class="line">        <span class="keyword">while</span> ($nextNode-&gt;next) &#123;</span><br><span class="line">            $nextNode = $nextNode-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 设置下一个节点</span></span><br><span class="line">        $nextNode-&gt;next = <span class="keyword">new</span> ListNode($data);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 移除节点</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">detach</span><span class="params">($data)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $node = <span class="keyword">$this</span>-&gt;find($data);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">findPrev</span><span class="params">($data)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ( is_null(<span class="keyword">$this</span>-&gt;next) ) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 如果第一个节点就是,则返回自身</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;next-&gt;data === $data) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">$this</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        $current = <span class="keyword">$this</span>-&gt;next;</span><br><span class="line">        $nextNode = $current-&gt;next;</span><br><span class="line">   </span><br><span class="line">        <span class="keyword">while</span> ( $nextNode-&gt;data !== $data )&#123;</span><br><span class="line">            $current = $nextNode;</span><br><span class="line">            <span class="comment">// 若存在下一个节点,则指向下一个节点,否则跳出</span></span><br><span class="line">            <span class="keyword">if</span> ($nextNode-&gt;next)&#123;</span><br><span class="line">                $nextNode = $nextNode-&gt;next;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> ($nextNode-&gt;data === $data) &#123;</span><br><span class="line">            <span class="keyword">return</span> $current;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 查询是否存在</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">find</span><span class="params">($data)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $nodePrev = <span class="keyword">$this</span>-&gt;findPrev($data);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> ($nodePrev) &#123;</span><br><span class="line">            <span class="keyword">return</span> $nodePrev-&gt;next;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此处只实现了几个操作作为演示,并非完整链表.其他操作方法各位也可以自己实现</p>
+<p>接下来就是测试代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$l = <span class="keyword">new</span> ListTest();</span><br><span class="line"><span class="comment">// 新增节点</span></span><br><span class="line">$l-&gt;attach(<span class="string">"hello"</span>);</span><br><span class="line">$l-&gt;attach(<span class="string">"world"</span>);</span><br><span class="line">$l-&gt;attach(<span class="string">"test"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">"------------------ attach node -----------------"</span> . PHP_EOL;</span><br><span class="line"></span><br><span class="line">$callable = <span class="function"><span class="keyword">function</span> <span class="params">($value)</span> <span class="title">use</span> <span class="params">($l)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> $l-&gt;find($value) ? <span class="string">"yes"</span> . PHP_EOL : <span class="string">"no"</span> . PHP_EOL;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 查询节点</span></span><br><span class="line">print_r($callable(<span class="string">"hello"</span>)); </span><br><span class="line">print_r($callable(<span class="string">"world"</span>)); </span><br><span class="line">print_r($callable(<span class="string">"test"</span>)); </span><br><span class="line">print_r($callable(<span class="string">"haha"</span>));</span><br></pre></td></tr></table></figure>
+
+<p>下面是输出结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">➜  List php exmple.php</span><br><span class="line">------------------ attach node -----------------</span><br><span class="line">yes</span><br><span class="line">yes</span><br><span class="line">yes</span><br><span class="line">no</span><br></pre></td></tr></table></figure>
+
+<h2 id="感想"><a href="#感想" class="headerlink" title="感想"></a>感想</h2><p>虽然在 php 的开发中,数据结构很少使用,基本上使用 php 的数组结构就可以完成大多数工作. 大多数 php 程序员基本没学过数据结构,也能有一份好的工作和丰厚的工资.但是我认为我们还是不能满足于此,工作中还是需要多多学习,以免到时候书到用时方恨少.碰到的问题明明有解决方案,但自己不知道.这才是最尴尬的了!</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/链表/" rel="tag"># 链表</a>
+          
+            <a href="/tags/数据结构/" rel="tag"># 数据结构</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/04/有关RabbitMQ相关入门基础知识总结/" rel="next" title="有关 RabbitMQ 快速部署与使用">
+                <i class="fa fa-chevron-left"></i> 有关 RabbitMQ 快速部署与使用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/11/redis-ziplist/" rel="prev" title="redis 源码探索:ziplist结构分析与使用">
+                redis 源码探索:ziplist结构分析与使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://u2.zhenyouliao.com/images/20140604/65be2bf6-766a-448c-8ed4-5493ab976be8.jpg" alt="KiLii">
+            
+              <p class="site-author-name" itemprop="name">KiLii</p>
+              <p class="site-description motion-element" itemprop="description">Kilii的博客，主要分享PHP，web开发等技术相关文章。和对音乐，生活的一些思考</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么的链表"><span class="nav-number">1.</span> <span class="nav-text">什么的链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#连接结构剖析"><span class="nav-number">2.</span> <span class="nav-text">连接结构剖析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在-php-中完成链表的实现"><span class="nav-number">3.</span> <span class="nav-text">在 php 中完成链表的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#感想"><span class="nav-number">4.</span> <span class="nav-text">感想</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">KiLii</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

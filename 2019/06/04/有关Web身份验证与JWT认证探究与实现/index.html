@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="jwt,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="今天上班，群里有朋友问介绍一个好用的AUTH认证第三方类。被人戏称面向框架编成。想想自己，为了成为一个好的架构师，怎么说也要手动实现一下吧 1、JWT 简述JWT全称（JSON Web Token）是一种用于web开发中，用于身份验证的一种机制。这里也引用以下RFC7519的定义。">
+<meta name="keywords" content="jwt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="有关Web身份验证与JWT认证探究与实现">
+<meta property="og:url" content="https://www.kilii.cc/2019/06/04/有关Web身份验证与JWT认证探究与实现/index.html">
+<meta property="og:site_name" content="Kilii&#39;s Blog">
+<meta property="og:description" content="今天上班，群里有朋友问介绍一个好用的AUTH认证第三方类。被人戏称面向框架编成。想想自己，为了成为一个好的架构师，怎么说也要手动实现一下吧 1、JWT 简述JWT全称（JSON Web Token）是一种用于web开发中，用于身份验证的一种机制。这里也引用以下RFC7519的定义。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-07-31T07:44:16.618Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="有关Web身份验证与JWT认证探究与实现">
+<meta name="twitter:description" content="今天上班，群里有朋友问介绍一个好用的AUTH认证第三方类。被人戏称面向框架编成。想想自己，为了成为一个好的架构师，怎么说也要手动实现一下吧 1、JWT 简述JWT全称（JSON Web Token）是一种用于web开发中，用于身份验证的一种机制。这里也引用以下RFC7519的定义。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.kilii.cc/2019/06/04/有关Web身份验证与JWT认证探究与实现/">
+
+
+
+
+
+  <title>有关Web身份验证与JWT认证探究与实现 | Kilii's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kilii's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.kilii.cc/2019/06/04/有关Web身份验证与JWT认证探究与实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="KiLii">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="http://u2.zhenyouliao.com/images/20140604/65be2bf6-766a-448c-8ed4-5493ab976be8.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kilii's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">有关Web身份验证与JWT认证探究与实现</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-06-04T23:23:13+08:00">
+                2019-06-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>今天上班，群里有朋友问介绍一个好用的AUTH认证第三方类。被人戏称面向框架编成。想想自己，为了成为一个好的架构师，怎么说也要手动实现一下吧</p>
+<h2 id="1、JWT-简述"><a href="#1、JWT-简述" class="headerlink" title="1、JWT 简述"></a>1、JWT 简述</h2><pre><code>JWT全称（JSON Web Token）是一种用于web开发中，用于身份验证的一种机制。</code></pre><p>这里也引用以下<a href="https://tools.ietf.org/html/rfc7519/" title="RFC7519" target="_blank" rel="noopener">RFC7519</a>的定义。</p>
+<a id="more"></a>
+
+<h2 id="2、为什么使用JWT"><a href="#2、为什么使用JWT" class="headerlink" title="2、为什么使用JWT"></a>2、为什么使用JWT</h2><p>我们来想象一下，普通开发流程中，出现用户身份认证，需要其登陆在能使用需求时，我们该如何实现呢?</p>
+<p>实现这个需求首要条件就是判断来的这个请求到底是谁，但是http本身是无状态的，服务端无法判断这一次请求的人，是与上一次请求属于用一个端。而我们不可能在每次请求的时候都携带上用户的登陆账户与密码。其一是每次操作都需要验证是很没必要且浪费资源的，其二http安全性很低，用户信息容易被人恶意获取和使用。</p>
+<p>此时引入了Session与Cookie的概念。当用户登陆后系统将用户登陆的信息存储在服务端（Session），抑或是客户端（Cookie）。</p>
+<p>但这两种方式实现验证都不是太好，Cookies存在安全问题，是可以被伪造的。而Session则存在分布式集群同步问题，因为session只存在与用户登陆时认证的那台服务器里。如若时后期使用集群的话，那就还得考虑文件文件同步的问题。徒增没必要的io与资源消耗，还要使得架构变得无比复杂。</p>
+<p>JWT就是为了解决这些难题而诞生的。它的工作流程就是用户登陆后，服务端根据用户登陆信息加上自己的密钥，生成一串TOKEN。用户拿到token后，在请求中携带这个token。服务端接受token判断这个token是否为我们颁发的。如果是，则验证成功。</p>
+<h2 id="3、JWT-功能实现"><a href="#3、JWT-功能实现" class="headerlink" title="3、JWT 功能实现"></a>3、JWT 功能实现</h2><h3 id="3-1-解构解析"><a href="#3-1-解构解析" class="headerlink" title="3.1 解构解析"></a>3.1 解构解析</h3><p>以下就是jwt的构成要素，分别为Header，Payload，Sign</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">graph TB</span><br><span class="line">    Header</span><br><span class="line">    Payload</span><br><span class="line">    Sign</span><br></pre></td></tr></table></figure>
+
+<p>引用<a href="https://jwt.io/" title="Google" target="_blank" rel="noopener">JWT官网</a>中的示例</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Header 中包含加密算法约定，与token类型约定</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"alg"</span>:<span class="string">"HS265"</span>,</span><br><span class="line">    <span class="string">"typ"</span>:<span class="string">"JWT"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Payload 中包含用户基础信息</span></span><br><span class="line"><span class="comment">// 这里可以填写用户公开信息，例如用户等级，角色信息，过期时间</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"sub"</span>: <span class="string">"1234567890"</span>,</span><br><span class="line">  <span class="string">"name"</span>: <span class="string">"John Doe"</span>,</span><br><span class="line">  <span class="string">"iat"</span>: <span class="number">1516239022</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 而Sign 则为Header与Payload二者base64加密后，拼接在加密的字符串</span></span><br><span class="line">HMACSHA256(</span><br><span class="line">  base64UrlEncode(header) + <span class="string">"."</span> +</span><br><span class="line">  base64UrlEncode(payload),</span><br><span class="line">  your<span class="number">-256</span>-bit-secret</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>token是将三个参数由”.”拼接，格式为 Header.Payload.Sign。之此jwt成功生成</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span><br></pre></td></tr></table></figure>
+
+<p>token颁发，用户拿到后可以通过base64解密拿到前两个公开信息。请求时携带token，服务端通过判断Header.Payload加密后是否等于Sign。如果等于则为受信任token。因为token对外暴露的只有加密方式，加密信息，加密密钥只有服务器持有。所以如果不知道密钥，是无法成功伪造能被服务器认证的token。</p>
+<p>这样就算服务器做分布式集群，只要保证服务器token验证密钥一样，用户的每一个访问就都能被成功识别。另外还可以payload中的信息，对用户请求做权限管理。</p>
+<h3 id="3-2-功能实现"><a href="#3-2-功能实现" class="headerlink" title="3.2 功能实现"></a>3.2 功能实现</h3><p>上面了解了jwt的验证方式与构造，我们就可以开始自己手动实现一个简单的JWT验证功能。默认加密算法为HS256</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">JWT</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $token = <span class="string">""</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> $header = [</span><br><span class="line">        <span class="string">"alg"</span>   =&gt; <span class="string">"HS256"</span>,</span><br><span class="line">        <span class="string">"typ"</span>   =&gt; <span class="string">"JWT"</span></span><br><span class="line">    ];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> $payload = [];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> $data = [];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> $secret = <span class="string">"123456"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> $duration = <span class="number">86400</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设置header</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setHeader</span><span class="params">(array $header)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">isset</span>($header[<span class="string">'alg'</span>]) || <span class="keyword">isset</span>($header[<span class="string">'typ'</span>]))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;header = $header;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 返回header</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getHeader</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;header;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 设置额外参数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getData</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;data;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 设置获取额外参数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setData</span><span class="params">(array $data)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;data = $data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">getPayload</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $data = <span class="keyword">$this</span>-&gt;data;</span><br><span class="line">        $time[<span class="string">'iat'</span>] = time();</span><br><span class="line">        $time[<span class="string">'exp'</span>] = $time[<span class="string">'iat'</span>] + <span class="keyword">$this</span>-&gt;duration;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> array_merge($data,$time);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 设置token生存时间</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setDuration</span><span class="params">(int $time)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;duration = $time;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 设置token生存时间</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getDuration</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;duration;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 设置生成</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">genToken</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $header = <span class="keyword">$this</span>-&gt;getHeader();</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">isset</span>($header[<span class="string">'alg'</span>]) || !<span class="keyword">isset</span>($header[<span class="string">'typ'</span>])) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="keyword">Exception</span>(<span class="string">"please set header"</span>, <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        $seg[<span class="string">"header"</span>] = <span class="keyword">$this</span>-&gt;encrypt(<span class="keyword">$this</span>-&gt;getHeader());</span><br><span class="line">        $seg[<span class="string">"payload"</span>] = <span class="keyword">$this</span>-&gt;encrypt(<span class="keyword">$this</span>-&gt;getPayload());</span><br><span class="line">        $seg[<span class="string">"sign"</span>] = <span class="keyword">$this</span>-&gt;sign($seg[<span class="string">"header"</span>].<span class="string">"."</span>.$seg[<span class="string">"payload"</span>], <span class="keyword">$this</span>-&gt;secret);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> implode(<span class="string">"."</span>, $seg);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 验证token</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> string $token</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> bool</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">valify</span><span class="params">($token)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $seg = explode(<span class="string">"."</span>, $token);</span><br><span class="line">        <span class="keyword">list</span>($header, $payload, $sign) = $seg;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">$this</span>-&gt;header = <span class="keyword">$this</span>-&gt;decrypt($header);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;payload = <span class="keyword">$this</span>-&gt;decrypt($payload);</span><br><span class="line">        <span class="comment">// 过期</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;payload[<span class="string">'exp'</span>] &lt; time()) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        $vali = <span class="keyword">$this</span>-&gt;sign(<span class="string">"$header.$payload"</span>, <span class="keyword">$this</span>-&gt;secret);</span><br><span class="line">        <span class="keyword">return</span> hash_equals($sign, $vali);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">sign</span><span class="params">($str, $key, $alg = <span class="string">"SHA256"</span>)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $token = hash_hmac($alg, $str, $key, <span class="keyword">true</span>);</span><br><span class="line">        <span class="keyword">return</span> base64_encode($token);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 编码</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">encrypt</span><span class="params">(array $arr)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> base64_encode(json_encode($arr));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 解码</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">decrypt</span><span class="params">(string $str)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> json_decode(base64_decode($str), <span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$jwt = <span class="keyword">new</span> JWT();</span><br><span class="line">$jwt-&gt;setData([<span class="string">"name"</span> =&gt; <span class="string">"tom"</span>, <span class="string">"age"</span> =&gt; <span class="number">23</span>]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 生成token</span></span><br><span class="line">$token = $jwt-&gt;genToken();</span><br><span class="line"><span class="keyword">echo</span> $token.PHP_EOL;</span><br><span class="line"><span class="comment">// 输出：</span></span><br><span class="line"><span class="comment">// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.</span></span><br><span class="line"><span class="comment">// eyJuYW1lIjoidG9tIiwiYWdlIjoyMywiaWF0IjoxNTU5NjM3NDI3LCJleHAiOjE1NTk3MjM4Mjd9.</span></span><br><span class="line"><span class="comment">// OTBmNTg5N2E0Y2JiM2JhMGIzNmQ4MmU5MGEyMTc3NjY5MzIzM2I3ZThmYjAxYjlmNDdhMzNlMjM0ZDc4ZDYzNw==</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 验证</span></span><br><span class="line">var_dump($jwt-&gt;valify($token));     <span class="comment">// bool(true)</span></span><br></pre></td></tr></table></figure>
+
+<p>此处代码为示例代码，有可能存在安全问题。请谨慎使用！</p>
+<h2 id="4、小结"><a href="#4、小结" class="headerlink" title="4、小结"></a>4、小结</h2><p>web开发中JWT使用非常广泛，其传递方式有拼接在url上，也有放在http请求头中</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GET</span> <span class="string">http://example.com/api</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Content-Type</span>: applicatoin/json</span><br><span class="line"><span class="attribute">Authrization</span>: Bearar &lt;token&gt;</span><br></pre></td></tr></table></figure>
+
+<p>其内容扩展性也非常不错，比如可以在 payload 中加入用户等级，用户角色。这样后台可以在Middleware中就可以判断用户是否有权限访问该接口，达到系统解耦的效用。而且token是纯粹计算得出，不用以来其他有状态服务，如redis mysql等等。计算时没有IO操作，全在内存中完成，处理速度极快，非常适合高并发的场景。</p>
+<p>当然，说了这么多有点，jwt也是有缺点的。即token一旦颁发，在有效期内绝对有效，无法收回。<br>所以为了安全考虑，架构师需要在系统架构师明确考虑好安全问题在使用。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/jwt/" rel="tag"># jwt</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/03/关于Websocket的报文分析，个人理解及实践/" rel="next" title="关于Websocket的报文分析，个人理解及实践">
+                <i class="fa fa-chevron-left"></i> 关于Websocket的报文分析，个人理解及实践
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/04/有关RabbitMQ相关入门基础知识总结/" rel="prev" title="有关 RabbitMQ 快速部署与使用">
+                有关 RabbitMQ 快速部署与使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://u2.zhenyouliao.com/images/20140604/65be2bf6-766a-448c-8ed4-5493ab976be8.jpg" alt="KiLii">
+            
+              <p class="site-author-name" itemprop="name">KiLii</p>
+              <p class="site-description motion-element" itemprop="description">Kilii的博客，主要分享PHP，web开发等技术相关文章。和对音乐，生活的一些思考</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、JWT-简述"><span class="nav-number">1.</span> <span class="nav-text">1、JWT 简述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、为什么使用JWT"><span class="nav-number">2.</span> <span class="nav-text">2、为什么使用JWT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3、JWT-功能实现"><span class="nav-number">3.</span> <span class="nav-text">3、JWT 功能实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-解构解析"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 解构解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-功能实现"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 功能实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4、小结"><span class="nav-number">4.</span> <span class="nav-text">4、小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">KiLii</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

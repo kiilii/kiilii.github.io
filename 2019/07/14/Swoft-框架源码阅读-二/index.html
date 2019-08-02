@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="swoft,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="上回内容速读:  Swoft 框架源码阅读(一);  注解注册书接上文,”swoft/framework/src/Processor/AnnotationProcessor.php” 的handle方法完成了注解的注册">
+<meta name="keywords" content="swoft">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swoft 框架源码阅读(二): AnnotationProcess 做了那些事儿">
+<meta property="og:url" content="https://www.kilii.cc/2019/07/14/Swoft-框架源码阅读-二/index.html">
+<meta property="og:site_name" content="Kilii&#39;s Blog">
+<meta property="og:description" content="上回内容速读:  Swoft 框架源码阅读(一);  注解注册书接上文,”swoft/framework/src/Processor/AnnotationProcessor.php” 的handle方法完成了注解的注册">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-07-31T07:44:16.618Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Swoft 框架源码阅读(二): AnnotationProcess 做了那些事儿">
+<meta name="twitter:description" content="上回内容速读:  Swoft 框架源码阅读(一);  注解注册书接上文,”swoft/framework/src/Processor/AnnotationProcessor.php” 的handle方法完成了注解的注册">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.kilii.cc/2019/07/14/Swoft-框架源码阅读-二/">
+
+
+
+
+
+  <title>Swoft 框架源码阅读(二): AnnotationProcess 做了那些事儿 | Kilii's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kilii's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.kilii.cc/2019/07/14/Swoft-框架源码阅读-二/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="KiLii">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="http://u2.zhenyouliao.com/images/20140604/65be2bf6-766a-448c-8ed4-5493ab976be8.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kilii's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Swoft 框架源码阅读(二): AnnotationProcess 做了那些事儿</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-14T13:02:09+08:00">
+                2019-07-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>上回内容速读:</p>
+<ul>
+<li><a href="https://kiilii.github.io/2019/07/13/Swoft-%E6%A1%86%E6%9E%B6%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB-%E4%B8%80/" target="_blank" rel="noopener">Swoft 框架源码阅读(一)</a>;</li>
+</ul>
+<h2 id="注解注册"><a href="#注解注册" class="headerlink" title="注解注册"></a>注解注册</h2><p>书接上文,”swoft/framework/src/Processor/AnnotationProcessor.php” 的handle方法完成了注解的注册</p>
+<a id="more"></a>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">handle</span><span class="params">()</span>: <span class="title">bool</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">$this</span>-&gt;application-&gt;beforeAnnotation()) &#123;</span><br><span class="line">        CLog::warning(<span class="string">'Stop annotation processor by beforeAnnotation return false'</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $app = <span class="keyword">$this</span>-&gt;application;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Find AutoLoader classes. Parse and collect annotations.</span></span><br><span class="line">    AnnotationRegister::load([</span><br><span class="line">        <span class="string">'inPhar'</span>               =&gt; \IN_PHAR,</span><br><span class="line">        <span class="string">'basePath'</span>             =&gt; $app-&gt;getBasePath(),</span><br><span class="line">        <span class="string">'notifyHandler'</span>        =&gt; [<span class="keyword">$this</span>, <span class="string">'notifyHandler'</span>],</span><br><span class="line">        <span class="string">'disabledAutoLoaders'</span>  =&gt; $app-&gt;getDisabledAutoLoaders(),</span><br><span class="line">        <span class="string">'disabledPsr4Prefixes'</span> =&gt; $app-&gt;getDisabledPsr4Prefixes(),</span><br><span class="line">    ]);</span><br><span class="line"></span><br><span class="line">    $stats = AnnotationRegister::getClassStats();</span><br><span class="line"></span><br><span class="line">    CLog::info(</span><br><span class="line">        <span class="string">'Annotations is scanned(autoloader %d, annotation %d, parser %d)'</span>,</span><br><span class="line">        $stats[<span class="string">'autoloader'</span>],</span><br><span class="line">        $stats[<span class="string">'annotation'</span>],</span><br><span class="line">        $stats[<span class="string">'parser'</span>]</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;application-&gt;afterAnnotation();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重点在 <code>AnnotationRegister::load</code>上,实际上该方法运行的是 <code>swoft/annotation/src/Resource/AnnotationResource.php</code>文件中的 <code>load</code> 方法. 我们分析下面函数体</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">load</span><span class="params">()</span>: <span class="title">void</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $prefixDirsPsr4 = <span class="keyword">$this</span>-&gt;classLoader-&gt;getPrefixesPsr4();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">foreach</span> ($prefixDirsPsr4 <span class="keyword">as</span> $ns =&gt; $paths) &#123;</span><br><span class="line">        <span class="comment">// Only scan namespaces</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;onlyNamespaces &amp;&amp; !in_array($ns, <span class="keyword">$this</span>-&gt;onlyNamespaces, <span class="keyword">true</span>)) &#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;notify(<span class="string">'excludeNs'</span>, $ns);</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// It is excluded psr4 prefix</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;isExcludedPsr4Prefix($ns)) &#123;</span><br><span class="line">            AnnotationRegister::registerExcludeNs($ns);</span><br><span class="line">            <span class="keyword">$this</span>-&gt;notify(<span class="string">'excludeNs'</span>, $ns);</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Find package/component loader class</span></span><br><span class="line">        <span class="keyword">foreach</span> ($paths <span class="keyword">as</span> $path) &#123;</span><br><span class="line">            $loaderFile = <span class="keyword">$this</span>-&gt;getAnnotationClassLoaderFile($path);</span><br><span class="line">            <span class="keyword">if</span> (!file_exists($loaderFile)) &#123;</span><br><span class="line">                <span class="keyword">$this</span>-&gt;notify(<span class="string">'noLoaderFile'</span>, <span class="keyword">$this</span>-&gt;clearBasePath($path), $loaderFile);</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            $loaderClass = <span class="keyword">$this</span>-&gt;getAnnotationLoaderClassName($ns);</span><br><span class="line">            <span class="keyword">if</span> (!class_exists($loaderClass)) &#123;</span><br><span class="line">                <span class="keyword">$this</span>-&gt;notify(<span class="string">'noLoaderClass'</span>, $loaderClass);</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            $loaderObject = <span class="keyword">new</span> $loaderClass();</span><br><span class="line">            <span class="keyword">if</span> (!$loaderObject <span class="keyword">instanceof</span> LoaderInterface) &#123;</span><br><span class="line">                <span class="keyword">$this</span>-&gt;notify(<span class="string">'invalidLoader'</span>, $loaderFile);</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">$this</span>-&gt;notify(<span class="string">'findLoaderClass'</span>, <span class="keyword">$this</span>-&gt;clearBasePath($loaderFile));</span><br><span class="line"></span><br><span class="line">            <span class="comment">// If is disable, will skip scan annotation classes</span></span><br><span class="line">            <span class="keyword">if</span> (!<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;disabledAutoLoaders[$loaderClass])) &#123;</span><br><span class="line">                AnnotationRegister::registerAutoLoaderFile($loaderFile);</span><br><span class="line">                <span class="keyword">$this</span>-&gt;notify(<span class="string">'addLoaderClass'</span>, $loaderClass);</span><br><span class="line">                <span class="keyword">$this</span>-&gt;loadAnnotation($loaderObject);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Storage auto loader to register</span></span><br><span class="line">            AnnotationRegister::addAutoLoader($ns, $loaderObject);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于每个依赖包中的<code>src</code>文件夹下都有一个Autoloader.php文件 都实现了一个 名为<code>getPrefixDirs</code>的方法:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getPrefixDirs</span><span class="params">()</span>: <span class="title">array</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        <span class="keyword">__NAMESPACE__</span> =&gt; <span class="keyword">__DIR__</span>,</span><br><span class="line">    ];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>$this-&gt;classLoader-&gt;getPrefixesPsr4()</code>搜集了可以加载的组件所在命名空间和文件地址,并返回一个关联数组.</p>
+<p>所以<code>$prefixDirsPsr4</code> 则是由命名空间做key,文件所在路径为值的关联数组</p>
+<p>然后,通过循环,检测出需要遍历的文件夹,过滤掉不合法地址,然后通过<code>registerAutoLoaderFile()</code>,<code>addAutoLoader()</code> 将所有需要注册的文件路径放入 <code>AnnotationRegister</code> 对象中的相应成员变量中.这里就不一一展示了.</p>
+<p>ps:如果对上面加在机制不太熟的,就需要补一补 composer 相关知识了</p>
+<p>然后程序调用了 <code>loadAnnotation()</code>,传入的则是一个 Autoloader对象,以便迭代.</p>
+<h2 id="迭代注册"><a href="#迭代注册" class="headerlink" title="迭代注册"></a>迭代注册</h2><p>在 <code>loadAnnotation()</code> 中,函数体内进行双重for循环,迭代所有需要注册的文件,并做条件判断与筛选,过滤掉不需要注册的类,最终执行 <code>parseAnnotation()</code> 方法.传入命名空间及类名:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">parseAnnotation</span><span class="params">(string $namespace, string $className)</span>: <span class="title">void</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Annotation reader</span></span><br><span class="line">    $reflectionClass = <span class="keyword">new</span> ReflectionClass($className);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Fix ignore abstract</span></span><br><span class="line">    <span class="keyword">if</span> ($reflectionClass-&gt;isAbstract()) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    $oneClassAnnotation = <span class="keyword">$this</span>-&gt;parseOneClassAnnotation($reflectionClass);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">empty</span>($oneClassAnnotation)) &#123;</span><br><span class="line">        AnnotationRegister::registerAnnotation($namespace, $className, $oneClassAnnotation);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该方法使用反射类,获取类的反射. 然后对其做解析操作,并把成功的结果集,注册进 <code>AnnotationRegister</code> 的静态成员中.</p>
+<p>那么 <code>parseOneClassAnnotation()</code>是如何解析的呢?</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">parseOneClassAnnotation</span><span class="params">(ReflectionClass $reflectionClass)</span>: <span class="title">array</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Annotation reader</span></span><br><span class="line">    $reader    = <span class="keyword">new</span> AnnotationReader();</span><br><span class="line">    $className = $reflectionClass-&gt;getName();</span><br><span class="line"></span><br><span class="line">    $oneClassAnnotation = [];</span><br><span class="line">    $classAnnotations   = $reader-&gt;getClassAnnotations($reflectionClass);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Register annotation parser</span></span><br><span class="line">    <span class="keyword">foreach</span> ($classAnnotations <span class="keyword">as</span> $classAnnotation) &#123;</span><br><span class="line">        <span class="keyword">if</span> ($classAnnotation <span class="keyword">instanceof</span> AnnotationParser) &#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;registerParser($className, $classAnnotation);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> [];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Class annotation</span></span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">empty</span>($classAnnotations)) &#123;</span><br><span class="line">        $oneClassAnnotation[<span class="string">'annotation'</span>] = $classAnnotations;</span><br><span class="line">        $oneClassAnnotation[<span class="string">'reflection'</span>] = $reflectionClass;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Property annotation</span></span><br><span class="line">    $reflectionProperties = $reflectionClass-&gt;getProperties();</span><br><span class="line">    <span class="keyword">foreach</span> ($reflectionProperties <span class="keyword">as</span> $reflectionProperty) &#123;</span><br><span class="line">        $propertyName        = $reflectionProperty-&gt;getName();</span><br><span class="line">        $propertyAnnotations = $reader-&gt;getPropertyAnnotations($reflectionProperty);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">empty</span>($propertyAnnotations)) &#123;</span><br><span class="line">            $oneClassAnnotation[<span class="string">'properties'</span>][$propertyName][<span class="string">'annotation'</span>] = $propertyAnnotations;</span><br><span class="line">            $oneClassAnnotation[<span class="string">'properties'</span>][$propertyName][<span class="string">'reflection'</span>] = $reflectionProperty;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Method annotation</span></span><br><span class="line">    $reflectionMethods = $reflectionClass-&gt;getMethods();</span><br><span class="line">    <span class="keyword">foreach</span> ($reflectionMethods <span class="keyword">as</span> $reflectionMethod) &#123;</span><br><span class="line">        $methodName        = $reflectionMethod-&gt;getName();</span><br><span class="line">        $methodAnnotations = $reader-&gt;getMethodAnnotations($reflectionMethod);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">empty</span>($methodAnnotations)) &#123;</span><br><span class="line">            $oneClassAnnotation[<span class="string">'methods'</span>][$methodName][<span class="string">'annotation'</span>] = $methodAnnotations;</span><br><span class="line">            $oneClassAnnotation[<span class="string">'methods'</span>][$methodName][<span class="string">'reflection'</span>] = $reflectionMethod;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $parentReflectionClass = $reflectionClass-&gt;getParentClass();</span><br><span class="line">    <span class="keyword">if</span> ($parentReflectionClass !== <span class="keyword">false</span>) &#123;</span><br><span class="line">        $parentClassAnnotation = <span class="keyword">$this</span>-&gt;parseOneClassAnnotation($parentReflectionClass);</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">empty</span>($parentClassAnnotation)) &#123;</span><br><span class="line">            $oneClassAnnotation[<span class="string">'parent'</span>] = $parentClassAnnotation;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> $oneClassAnnotation;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它使用了 <code>Doctrine</code> 的 <code>AnnotationReader</code> 类,对该类中的所有注释进行读取.</p>
+<p>在此之前,我们先要明白,在 swoft 注解有三种形式</p>
+<ul>
+<li>对类本身的注解</li>
+<li>对类中方法的注解</li>
+<li>对类中成员的注解</li>
+</ul>
+<p>所以接下来的代码可以分为 3 块. 从注释中就可以看出来, 就是对以上 3 类的解析.然后用放进 <code>$oneClassAnnotation</code>中,以关联数组的形式.</p>
+<p><code>$oneClassAnnotation</code> 则形成了一个对该类拥有的所有注解的一个简易描述.形式为:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line"><span class="comment">// 对类的注解,及它的反射</span></span><br><span class="line"><span class="string">'annotation'</span> =&gt; [</span><br><span class="line">     <span class="keyword">new</span> ClassAnnotation(),</span><br><span class="line">     <span class="keyword">new</span> ClassAnnotation(),</span><br><span class="line">     <span class="keyword">new</span> ClassAnnotation(),</span><br><span class="line">]</span><br><span class="line"><span class="string">'reflection'</span> =&gt; <span class="keyword">new</span> ReflectionClass(),</span><br><span class="line"><span class="comment">// 该类中对成员变量的注解,及它的反射</span></span><br><span class="line"><span class="string">'properties'</span> =&gt; [</span><br><span class="line">     <span class="string">'propertyName'</span> =&gt; [</span><br><span class="line">         <span class="string">'annotation'</span> =&gt; [</span><br><span class="line">             <span class="keyword">new</span> PropertyAnnotation(),</span><br><span class="line">             <span class="keyword">new</span> PropertyAnnotation(),</span><br><span class="line">             <span class="keyword">new</span> PropertyAnnotation(),</span><br><span class="line">         ]</span><br><span class="line">        <span class="string">'reflection'</span> =&gt; <span class="keyword">new</span> ReflectionProperty(),</span><br><span class="line">     ]</span><br><span class="line">],</span><br><span class="line"><span class="comment">// 该类中对方法的注解,及它的反射</span></span><br><span class="line"><span class="string">'methods'</span> =&gt; [</span><br><span class="line">     <span class="string">'methodName'</span> =&gt; [</span><br><span class="line">         <span class="string">'annotation'</span> =&gt; [</span><br><span class="line">             <span class="keyword">new</span> MethodAnnotation(),</span><br><span class="line">             <span class="keyword">new</span> MethodAnnotation(),</span><br><span class="line">             <span class="keyword">new</span> MethodAnnotation(),</span><br><span class="line">         ]</span><br><span class="line">        <span class="string">'reflection'</span> =&gt; <span class="keyword">new</span> ReflectionFunctionAbstract</span><br><span class="line">      ]</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>然后返回,然后<code>parseAnnotation()</code> 方法中的<code>AnnotationRegister::registerAnnotation</code> 会将它收集值该类静态成员<code>$annotation</code>,成为一个数组集合,方便后面的调用</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>至此 <code>AnnotationProcessor</code> 所做的主要工作也就结束了.自己看了的朋友大概也发现了,这个 process 只仅仅做了一个收集的工作,并未有完成实质性的操作.</p>
+<p>确实,此处只是做了一个记录,真正的初始化工作都在 <code>BeanProcessor</code> 中完成.并且后面会相关联到swoft 中的一个 event 组件.那么这些我们在下篇文章中讲解</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/swoft/" rel="tag"># swoft</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/13/Swoft-框架源码阅读-一/" rel="next" title="Swoft2.0 框架源码阅读(一):Swoft2.0 运行的时候到底做了什么">
+                <i class="fa fa-chevron-left"></i> Swoft2.0 框架源码阅读(一):Swoft2.0 运行的时候到底做了什么
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://u2.zhenyouliao.com/images/20140604/65be2bf6-766a-448c-8ed4-5493ab976be8.jpg" alt="KiLii">
+            
+              <p class="site-author-name" itemprop="name">KiLii</p>
+              <p class="site-description motion-element" itemprop="description">Kilii的博客，主要分享PHP，web开发等技术相关文章。和对音乐，生活的一些思考</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#注解注册"><span class="nav-number">1.</span> <span class="nav-text">注解注册</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#迭代注册"><span class="nav-number">2.</span> <span class="nav-text">迭代注册</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">KiLii</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

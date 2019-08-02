@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="redis,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在我们日常开发中,经常有使用到 Redis 来作缓存.主要是由于 Redis 有着多种数据结构,而非单一的 Key-Value 存储,由于存储在内存中,读取速度自然是比存放在硬盘中要快很多. 那么为了节约内存的使用 Redis 在配置中有提供一个 ziplist 的配置项, 本次就让我们来探究一下">
+<meta name="keywords" content="redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis 源码探索:ziplist结构分析与使用">
+<meta property="og:url" content="https://www.kilii.cc/2019/07/11/redis-ziplist/index.html">
+<meta property="og:site_name" content="Kilii&#39;s Blog">
+<meta property="og:description" content="在我们日常开发中,经常有使用到 Redis 来作缓存.主要是由于 Redis 有着多种数据结构,而非单一的 Key-Value 存储,由于存储在内存中,读取速度自然是比存放在硬盘中要快很多. 那么为了节约内存的使用 Redis 在配置中有提供一个 ziplist 的配置项, 本次就让我们来探究一下">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-07-31T07:44:16.620Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="redis 源码探索:ziplist结构分析与使用">
+<meta name="twitter:description" content="在我们日常开发中,经常有使用到 Redis 来作缓存.主要是由于 Redis 有着多种数据结构,而非单一的 Key-Value 存储,由于存储在内存中,读取速度自然是比存放在硬盘中要快很多. 那么为了节约内存的使用 Redis 在配置中有提供一个 ziplist 的配置项, 本次就让我们来探究一下">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://www.kilii.cc/2019/07/11/redis-ziplist/">
+
+
+
+
+
+  <title>redis 源码探索:ziplist结构分析与使用 | Kilii's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kilii's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.kilii.cc/2019/07/11/redis-ziplist/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="KiLii">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="http://u2.zhenyouliao.com/images/20140604/65be2bf6-766a-448c-8ed4-5493ab976be8.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kilii's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">redis 源码探索:ziplist结构分析与使用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-11T00:08:38+08:00">
+                2019-07-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在我们日常开发中,经常有使用到 Redis 来作缓存.主要是由于 Redis 有着多种数据结构,而非单一的 Key-Value 存储,由于存储在内存中,读取速度自然是比存放在硬盘中要快很多.</p>
+<p>那么为了节约内存的使用 Redis 在配置中有提供一个 ziplist 的配置项, 本次就让我们来探究一下</p>
+<a id="more"></a>
+
+<h2 id="关于-ZipList"><a href="#关于-ZipList" class="headerlink" title="关于 ZipList"></a>关于 ZipList</h2><p>上面提到了 ziplist 是用来对redis数据结构来做内存优化的一种<code>短结构</code>, 它是对 <code>list</code>,<code>hash</code>, <code>zset</code>这些<code>长结构</code>的一种结构压缩.</p>
+<p>关于以上三种结构的本质:</p>
+<ul>
+<li>列表本质是一个<code>双链表</code>结构</li>
+<li>散列是<code>哈希表</code>的结构</li>
+<li>有序列表是<code>哈希表</code>加<code>跳表</code>实现的</li>
+</ul>
+<p>本次我们拿列表结构举例子</p>
+<p>链表这种结构,以前的文章<a href="https://kiilii.github.io/2019/07/05/PHP-%E5%AE%9E%E7%8E%B0%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8/" target="_blank" rel="noopener">PHP 实现单向链表</a>中有提到过.单链表有个缺点,那就是只能从头遍历到位,不能从未遍历到头.那么双链表结构就是在单链表基础上增加了一个<code>prev</code>节点,让它可以从两种方向都能遍历.所以我们在使用 redis 的列表结构时,都有<code>lpush</code>,<code>rpush</code>,<code>lpop</code>,<code>rpop</code>等命令能操作链表左右两端.</p>
+<p>下面是源码中对 list 结构的定义,其中主要的是<code>listNode</code>与<code>list</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ../src/adlist.h</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">prev</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">next</span>;</span></span><br><span class="line">    <span class="keyword">void</span> *value;</span><br><span class="line">&#125; listNode;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">list</span> &#123;</span></span><br><span class="line">    listNode *head;</span><br><span class="line">    listNode *tail;</span><br><span class="line">    <span class="keyword">void</span> *(*dup)(<span class="keyword">void</span> *ptr);</span><br><span class="line">    <span class="keyword">void</span> (*<span class="built_in">free</span>)(<span class="keyword">void</span> *ptr);</span><br><span class="line">    <span class="keyword">int</span> (*match)(<span class="keyword">void</span> *ptr, <span class="keyword">void</span> *key);</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> len;</span><br><span class="line">&#125; <span class="built_in">list</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">listIter</span> &#123;</span></span><br><span class="line">    listNode *next;</span><br><span class="line">    <span class="keyword">int</span> direction;</span><br><span class="line">&#125; listIter;</span><br></pre></td></tr></table></figure>
+
+<p>listNode 结构里是三个指针,也就是说如果是64位编译器编译, 不算value本身占用大小,该结构需要24个字节长度.而结构中 value 本身也需要两个整数(字符串长度,字符串剩余可用空间)来标识值的偏移量,以便读取.</p>
+<p>那么 ziplist 的结构如下:</p>
+<blockquote>
+<p>&lt;zlbytes&gt; &lt;zltail&gt; &lt;zllen&gt; &lt;entry&gt; &lt;entry&gt; … &lt;entry&gt; &lt;zlend&gt;<br>该结构是直接一字节形式存储在内存中,其中</p>
+<ul>
+<li>zlbytes: 长度为 32 位,用来表示整个 ziplist 长度</li>
+<li>zltail: 长度为 32 位,用来表示最后一个 entry 所在偏移量.一般用于反向遍历时使用</li>
+<li>zllen: 长度为 8 位,用于表示 entry 数量</li>
+<li>entry: 为节点</li>
+<li>zlend: 是整个结构的结束符标示, 值为 0xFF</li>
+</ul>
+</blockquote>
+<p>而 <code>entry</code> 节点本身也有结构标示,共有三部分:</p>
+<blockquote>
+<p>&lt;prevlength&gt; &lt;encoding&gt; &lt;data&gt;</p>
+</blockquote>
+<ul>
+<li>prevlength:长度为 8 位,用来表示上个节点长度,反向遍历时使用</li>
+<li>encoding:长度为 8 位,用于标示 data 数据类型</li>
+<li>data:长度不限,为值本身</li>
+</ul>
+<p>当然前节点长度也有过大的时候,prevlength 在长度超过 254时(255为0xFF,容易与结束符混淆),程序会向后偏移32位长度,这32位长度用于标识真正的字节长度.</p>
+<p>我们知道 8 位为1字节,所以使用ziplist会相对更省内存一点儿.</p>
+<h2 id="ziplist的使用"><a href="#ziplist的使用" class="headerlink" title="ziplist的使用"></a>ziplist的使用</h2><p>在 redis的 config 文件中,有一下相关配置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>hash 结构的ziplist</span><br><span class="line">hash-max-ziplist-entries 512 </span><br><span class="line">hash-max-ziplist-value 64</span><br><span class="line"><span class="meta">#</span>zset 结构的ziplist</span><br><span class="line">zset-max-ziplist-entries 512</span><br><span class="line">zset-max-ziplist-value 64</span><br><span class="line"></span><br><span class="line">list-max-ziplist-size -2</span><br></pre></td></tr></table></figure>
+
+<p>其中已entries结尾的表示节点数量,以value结尾的标识值最多占用字节大小</p>
+<p>凡是长度数量位超过该配置的键,都会转为ziplist结构存储,否则程序会自动转换回原有结构.</p>
+<h2 id="ziplist的缺点"><a href="#ziplist的缺点" class="headerlink" title="ziplist的缺点"></a>ziplist的缺点</h2><p>有优点,那自然也会有缺点. 在上面我们对ziplist结构做了解析可以看出, ziplist在读取时可以非常快,但它本事数据存储是连续且相关的,在修改起来就非常困难,特别是在节点量过多的时候,性能更会降低.</p>
+<p>所以在实际开发中控制好对 entry 和 value 长度的限制也是非常必要的.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/redis/" rel="tag"># redis</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/05/PHP-实现单向链表/" rel="next" title="PHP 实现单向链表">
+                <i class="fa fa-chevron-left"></i> PHP 实现单向链表
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/11/基与php运算符的优先级的一个小问题/" rel="prev" title="基与php运算符的优先级的一个小问题">
+                基与php运算符的优先级的一个小问题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://u2.zhenyouliao.com/images/20140604/65be2bf6-766a-448c-8ed4-5493ab976be8.jpg" alt="KiLii">
+            
+              <p class="site-author-name" itemprop="name">KiLii</p>
+              <p class="site-description motion-element" itemprop="description">Kilii的博客，主要分享PHP，web开发等技术相关文章。和对音乐，生活的一些思考</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#关于-ZipList"><span class="nav-number">1.</span> <span class="nav-text">关于 ZipList</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ziplist的使用"><span class="nav-number">2.</span> <span class="nav-text">ziplist的使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ziplist的缺点"><span class="nav-number">3.</span> <span class="nav-text">ziplist的缺点</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">KiLii</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
