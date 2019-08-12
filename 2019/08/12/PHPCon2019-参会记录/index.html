@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Swoft,源码,">
+  <meta name="keywords" content="PHPCon,随笔,">
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="Swoft  是一个基于 php swoole 构建的 mvc 框架,也是第一个使用到注解概念的框架. 第一次见到看到的时候,真的是被惊艳了到了.个人非常很喜欢.  所以这次就开读源码的坑!">
-<meta name="keywords" content="Swoft,源码">
+<meta name="description" content="2019年8月10号至11号 PHPCon2019 在上海举行了，这几天台风利奇马来袭，在江浙沪破坏。气候恶劣，飞机高铁的航班接连取消，但这样也没有难道PHPer的热情，当天会场的参会人数还是非常多。 这是我第一次参加的技术峰会，虽然顶着台风来到上海，累也辛苦。但这次参会听到了许多大佬的演讲，还认识了新的朋友，收获巨大。 在此记录一下会议的一些内容，以及一些个人理解。">
+<meta name="keywords" content="PHPCon,随笔">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Swoft2.0 框架源码阅读(一):Swoft2.0 运行的时候到底做了什么">
-<meta property="og:url" content="http://www.kilii.cc/2019/07/13/Swoft-框架源码阅读-一/index.html">
+<meta property="og:title" content="我的 PHPCon2019 技术峰会参会记录">
+<meta property="og:url" content="http://www.kilii.cc/2019/08/12/PHPCon2019-参会记录/index.html">
 <meta property="og:site_name" content="Kilii&#39;s Blog">
-<meta property="og:description" content="Swoft  是一个基于 php swoole 构建的 mvc 框架,也是第一个使用到注解概念的框架. 第一次见到看到的时候,真的是被惊艳了到了.个人非常很喜欢.  所以这次就开读源码的坑!">
+<meta property="og:description" content="2019年8月10号至11号 PHPCon2019 在上海举行了，这几天台风利奇马来袭，在江浙沪破坏。气候恶劣，飞机高铁的航班接连取消，但这样也没有难道PHPer的热情，当天会场的参会人数还是非常多。 这是我第一次参加的技术峰会，虽然顶着台风来到上海，累也辛苦。但这次参会听到了许多大佬的演讲，还认识了新的朋友，收获巨大。 在此记录一下会议的一些内容，以及一些个人理解。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-07-31T07:44:16.619Z">
+<meta property="og:updated_time" content="2019-08-12T10:18:17.446Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Swoft2.0 框架源码阅读(一):Swoft2.0 运行的时候到底做了什么">
-<meta name="twitter:description" content="Swoft  是一个基于 php swoole 构建的 mvc 框架,也是第一个使用到注解概念的框架. 第一次见到看到的时候,真的是被惊艳了到了.个人非常很喜欢.  所以这次就开读源码的坑!">
+<meta name="twitter:title" content="我的 PHPCon2019 技术峰会参会记录">
+<meta name="twitter:description" content="2019年8月10号至11号 PHPCon2019 在上海举行了，这几天台风利奇马来袭，在江浙沪破坏。气候恶劣，飞机高铁的航班接连取消，但这样也没有难道PHPer的热情，当天会场的参会人数还是非常多。 这是我第一次参加的技术峰会，虽然顶着台风来到上海，累也辛苦。但这次参会听到了许多大佬的演讲，还认识了新的朋友，收获巨大。 在此记录一下会议的一些内容，以及一些个人理解。">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://www.kilii.cc/2019/07/13/Swoft-框架源码阅读-一/">
+  <link rel="canonical" href="http://www.kilii.cc/2019/08/12/PHPCon2019-参会记录/">
 
 
 
 
 
-  <title>Swoft2.0 框架源码阅读(一):Swoft2.0 运行的时候到底做了什么 | Kilii's Blog</title>
+  <title>我的 PHPCon2019 技术峰会参会记录 | Kilii's Blog</title>
   
 
 
@@ -263,7 +263,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.kilii.cc/2019/07/13/Swoft-框架源码阅读-一/">
+    <link itemprop="mainEntityOfPage" href="http://www.kilii.cc/2019/08/12/PHPCon2019-参会记录/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="KiLii">
@@ -280,7 +280,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Swoft2.0 框架源码阅读(一):Swoft2.0 运行的时候到底做了什么</h1>
+          <h1 class="post-title" itemprop="name headline">我的 PHPCon2019 技术峰会参会记录</h1>
         
 
         <div class="post-meta">
@@ -292,8 +292,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-13T18:22:33+08:00">
-                2019-07-13
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-08-12T15:44:59+08:00">
+                2019-08-12
               </time>
             
 
@@ -330,31 +330,98 @@
       
 
       
-        <p>Swoft  是一个基于 php swoole 构建的 mvc 框架,也是第一个使用到注解概念的框架. 第一次见到看到的时候,真的是被惊艳了到了.个人非常很喜欢. </p>
-<p>所以这次就开读源码的坑!</p>
+        <p>2019年8月10号至11号 PHPCon2019 在上海举行了，这几天台风<code>利奇马</code>来袭，在江浙沪破坏。气候恶劣，飞机高铁的航班接连取消，但这样也没有难道PHPer的热情，当天会场的参会人数还是非常多。</p>
+<p>这是我第一次参加的技术峰会，虽然顶着台风来到上海，累也辛苦。但这次参会听到了许多大佬的演讲，还认识了新的朋友，收获巨大。</p>
+<p>在此记录一下会议的一些内容，以及一些个人理解。</p>
 <a id="more"></a>
-
-<h2 id="项目启动时Swoft做了什么"><a href="#项目启动时Swoft做了什么" class="headerlink" title="项目启动时Swoft做了什么"></a>项目启动时Swoft做了什么</h2><p>我们知道,启动Swoft框架需要运行一个命令</p>
-<blockquote>
-<p>sudo php bib/swoft http:start</p>
-</blockquote>
-<p>在这个命令结束后,swoft就完成了所有程序的初始化,那么启动时到Swoft 到底做了写什么呢?首先进入项目文件<code>app</code>同级目录 <code>bin</code> 文件夹下有一个 <code>swoft</code>的文件, 这是由 <code>phar</code> 生成的一个可运行文件.内容是:</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Bootstrap</span></span><br><span class="line"><span class="keyword">require_once</span> <span class="keyword">__DIR__</span> . <span class="string">'/bootstrap.php'</span>;</span><br><span class="line"></span><br><span class="line">\Swoole\Runtime::enableCoroutine();</span><br><span class="line"></span><br><span class="line">Swoole\Coroutine::set([</span><br><span class="line">    <span class="string">'max_coroutine'</span> =&gt; <span class="number">300000</span>,</span><br><span class="line">]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Run application</span></span><br><span class="line">(<span class="keyword">new</span> \App\Application())-&gt;run();</span><br></pre></td></tr></table></figure>
-
-<p>功能很简单,自动加载文件,开启swoole携程,然后运行程序.</p>
-<p>重要的是run方法,该方法在 <code>swoft/framework/src/SwoftApplication.php</code> 文件里.勒种的构造函数</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">(array $config = [])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// code .....</span></span><br><span class="line"></span><br><span class="line">    $processors = <span class="keyword">$this</span>-&gt;processors();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">$this</span>-&gt;processor = <span class="keyword">new</span> ApplicationProcessor(<span class="keyword">$this</span>);</span><br><span class="line">    <span class="keyword">$this</span>-&gt;processor-&gt;addFirstProcessor(...$processors);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">$this</span>-&gt;init();</span><br><span class="line"></span><br><span class="line">    CLog::info(<span class="string">'Project path is &lt;info&gt;%s&lt;/info&gt;'</span>, <span class="keyword">$this</span>-&gt;basePath);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// code ....</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// code ....</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">processors</span><span class="params">()</span>: <span class="title">array</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        <span class="keyword">new</span> EnvProcessor(<span class="keyword">$this</span>),</span><br><span class="line">        <span class="keyword">new</span> ConfigProcessor(<span class="keyword">$this</span>),</span><br><span class="line">        <span class="keyword">new</span> AnnotationProcessor(<span class="keyword">$this</span>),</span><br><span class="line">        <span class="keyword">new</span> BeanProcessor(<span class="keyword">$this</span>),</span><br><span class="line">        <span class="keyword">new</span> EventProcessor(<span class="keyword">$this</span>),</span><br><span class="line">        <span class="keyword">new</span> ConsoleProcessor(<span class="keyword">$this</span>),</span><br><span class="line">    ];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// code ....</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">run</span><span class="params">()</span>: <span class="title">void</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">$this</span>-&gt;beforeRun()) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">$this</span>-&gt;processor-&gt;handle();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>此处一目了然 <code>$this-&gt;processor-&gt;handle()</code> 是把  <code>processors</code> 方法所返回的对象数组全部指向了一遍.从类文件命名我们可以看出程序初始化时</p>
+<p>此次有介绍了 swoole 的最新特性，还有 Tarsphp 以及 hyperf 框架的信息与介绍。但此次的其实更基调其实更多偏向架构层面。</p>
+<p>在这里先贴一下日程</p>
 <ul>
-<li>初始化 env 文件相关</li>
-<li>初始化 config 相关</li>
-<li>初始化 Annotation(注解) 相关</li>
-<li>初始化 bean 相关</li>
-<li>初始化事件相关</li>
-<li>最后初始化控制台相关</li>
+<li><p>8 月 10 日程</p>
+<ul>
+<li><p>08:30-09:00 签到入场</p>
+</li>
+<li><p>09:00-09:20 大会开场、抽奖</p>
+</li>
+<li><p>09:30-10:15 Swoole5带PHP走向远方——韩天峰</p>
+</li>
+<li><p>10:30-11:15 微博应对突发流量的一些经验——胡波</p>
+</li>
+<li><p>11:30-12:15 消息服务中台实战——王晶</p>
+</li>
+<li><p>14:00-14:45 拥抱TARS：构建PHP微服务生态——梁晨</p>
+</li>
+<li><p>14:45-15:15 茶歇时间</p>
+</li>
+<li><p>15:15-16:00 PHP常驻进程编程须知——郭新华</p>
+</li>
+<li><p>16:15-17:00 代码解耦之道——黄朝晖</p>
+</li>
+<li><p>17:00-17:10 抽奖</p>
+</li>
 </ul>
-<p>关于env与config我们暂且不谈, 从下一篇文章开始我们直接进入 Annotation 也是 swoft 框架中亮点功能开始讲解</p>
+</li>
+</ul>
+<ul>
+<li><p>8 月 11 日程</p>
+<ul>
+<li><p>09:00-09:20 抽奖</p>
+</li>
+<li><p>09:30-10:15 PHP在2345的业务实践——高旭</p>
+</li>
+<li><p>10:30-11:15 惠新宸的演讲</p>
+</li>
+<li><p>11:30-12:15 圆桌讨论</p>
+</li>
+<li><p>14:00-14:45 破解云原生应用的可观测性——刘征</p>
+</li>
+<li><p>14:45-15:15 茶歇时间</p>
+</li>
+<li><p>15:15-16:00 一个团队的集体学习——陈雷</p>
+</li>
+<li><p>16:15-17:00 聊聊开源的另一面——庄表伟</p>
+</li>
+<li><p>17:00-17:10 抽奖</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>在这些演讲中我也有比较中意的演讲，也从中学到了一下东西，在这里做一些整理。</p>
+<hr>
+<h2 id="桶哥的“消息中台”"><a href="#桶哥的“消息中台”" class="headerlink" title="桶哥的“消息中台”"></a>桶哥的“消息中台”</h2><p>在这次峰会中，我个人比较感兴趣的是方面，是这几年炒的比较火热的 <code>中台</code> 概念。桶哥在他的演讲中，将他们公司自己实现的 <code>消息中台</code> 作为例子讲解。</p>
+<p>中台在我的理解是</p>
+<blockquote>
+<p>整合后台服务，提供前台调取</p>
+</blockquote>
+<p>在桶哥局的例子中，他们的消息中台，整合了消息推送，sms，应用推送等等所有服务在中台系统里面。并在中台中做了业务逻辑的整合。前端只需直接调取简单的接口，就可以实现许多功能。并且后续可以持续往中台里集成其他功能，对前端后台代码影响降至最低。</p>
+<p>这让人感觉消息中台就像是一个“战舰”， “战舰”里面继承了许许多多的工具武器，工人调取使用。中台就是个强大丰富的“武器库”</p>
+<p>当然中台的也是有缺点的，那就是业务无法复用，以及中台一出问题，所有依赖中台的服务也会出问题。并且中台战略并不适合创业公司，以及中小企业。当然中小企业也可以选择做一个简单的中台，无需做成一个庞然大物，这样也可以节约成本。毕竟 ROI 才是一个公司最重要的指标嘛。</p>
+<p>然后展示了他们消息中台的架构图。对做了解析，在此我就不做过多解析。</p>
+<p>另外桶哥也提了下他们的消息中台，是使用 swoole 实现的。据桶哥叙述，他们使用swoole实现的消息推送，能达到单台机器有 240w 的连接处理能力。</p>
+<blockquote>
+<p>Tips：我们知道在以往的版本中 swoole 是有 100w 连接限制的。这里他们是使用了linux的多用户以及systemd的方案完成单台 240w 连接的成果。 当然现在的版本已经无限制了。但是有需要的朋友和以尝试一下。</p>
+</blockquote>
+<h2 id="云原生应用的可观测性"><a href="#云原生应用的可观测性" class="headerlink" title="云原生应用的可观测性"></a>云原生应用的可观测性</h2><p>第一次看到这个标题的时候一时间都没看懂什么意思。知道后面才稍微清楚讲的是什么。</p>
+<p>演讲人刘征是 elastic 的布道师。在他的演讲中他指出，现如今的架构演变已经从<code>单体架构</code>转向<code>微服务</code>。将一个应用拆成多个服务，让其模块化，容器化，这样能保证开发和部署的方便。</p>
+<p>但是当容器多了以后运维与维护的问题则摆到了面前。我们可以想像，在实际业务运行中，各个容器的依赖肯定是非常复杂的，常常是一个服务依赖多个服务，多个服务又依赖一个服务。还有可能出现链式的服务调用，在这种情况下，如果线上出现了bug该如何快速定位？这就是一个很显然的问题。</p>
+<p>演讲人指出，要解决这个问题需要三大支柱</p>
+<ul>
+<li>日志  —— 是对记录日志的规范，以及日志的搜集。</li>
+<li>监控  —— 是对容器状态的监控</li>
+<li>APM  —— 对容器调用链路的监控</li>
+</ul>
+<p>达到这三样标准，即可达到快速且准确的定位问题，实现服务的可观测性。</p>
+<p>然后推荐了一些相关的工具 例如</p>
+<ul>
+<li>关于日志的 ELK 套件。</li>
+<li>关于容器状态管理的 Prometheus</li>
+<li>关于容器间链路调用追踪的 Zipkin</li>
+</ul>
+<p>虽然此次演讲主要面向的群体是架构师层次的程序员，但在这个演讲中我也更深刻的理解了微服务架构的概念，以及如何构建一个健壮的微服务架构系统，所获颇多。</p>
+<h2 id="待续…"><a href="#待续…" class="headerlink" title="待续…"></a>待续…</h2><p>短短两天一堆高质量的信息进入脑袋，一时回忆不过来。先暂时就记录这么多，其他的后面在继续。</p>
+<p>另外，本次参加大会真的是一次很奇妙的体验，与大神面对面接触，感受到了技术氛围。听鸟哥讲php社区生态，php jit的开发进度，还有p++的一些边角新闻，还是非常有意思的。</p>
+<p>（最主要的是，我还蹭到了鸟哥的微信好友位哈哈哈～～～～～～～～～）</p>
+<p>嗯，希望有一天我也能成为大神，站在台上给大家分享一些我所知道的东西！</p>
 
       
     </div>
@@ -372,9 +439,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Swoft/" rel="tag"># Swoft</a>
+            <a href="/tags/PHPCon/" rel="tag"># PHPCon</a>
           
-            <a href="/tags/源码/" rel="tag"># 源码</a>
+            <a href="/tags/随笔/" rel="tag"># 随笔</a>
           
         </div>
       
@@ -387,8 +454,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/07/11/基与php运算符的优先级的一个小问题/" rel="next" title="基与php运算符的优先级的一个小问题">
-                <i class="fa fa-chevron-left"></i> 基与php运算符的优先级的一个小问题
+              <a href="/2019/07/14/Swoft-框架源码阅读-二/" rel="next" title="Swoft 框架源码阅读(二): AnnotationProcess 做了那些事儿">
+                <i class="fa fa-chevron-left"></i> Swoft 框架源码阅读(二): AnnotationProcess 做了那些事儿
               </a>
             
           </div>
@@ -396,10 +463,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/07/14/Swoft-框架源码阅读-二/" rel="prev" title="Swoft 框架源码阅读(二): AnnotationProcess 做了那些事儿">
-                Swoft 框架源码阅读(二): AnnotationProcess 做了那些事儿 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -524,7 +587,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#项目启动时Swoft做了什么"><span class="nav-number">1.</span> <span class="nav-text">项目启动时Swoft做了什么</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#桶哥的“消息中台”"><span class="nav-number">1.</span> <span class="nav-text">桶哥的“消息中台”</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#云原生应用的可观测性"><span class="nav-number">2.</span> <span class="nav-text">云原生应用的可观测性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#待续…"><span class="nav-number">3.</span> <span class="nav-text">待续…</span></a></li></ol></div>
             
 
           </div>
