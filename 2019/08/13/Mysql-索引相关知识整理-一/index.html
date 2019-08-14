@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="PHPCon,随笔,">
+  <meta name="keywords" content="Hexo, NexT">
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="2019年8月10号至11号 PHPCon2019 在上海举行了，这几天台风利奇马来袭，在江浙沪破坏。气候恶劣，飞机高铁的航班接连取消，但这样也没有难道PHPer的热情，当天会场的参会人数还是非常多。 这是我第一次参加的技术峰会，虽然顶着台风来到上海，累也辛苦。但这次参会听到了许多大佬的演讲，还认识了新的朋友，收获巨大。 在此记录一下会议的一些内容，以及一些个人理解。">
-<meta name="keywords" content="PHPCon,随笔">
+<meta name="description" content="为啥写这篇文章呢？这些知识都比较浅，可能人人都知道，含金量不高。但是作为一名程序员，工作这么久，学到的东西肯定很杂乱。梳理知识也是非常重要的一个学习方式。一定要打好基础呀～～！ 基础概念目录整理">
+<meta name="keywords" content="PHP,web,个人博客,生活,音乐,随笔">
 <meta property="og:type" content="article">
-<meta property="og:title" content="我的 PHPCon2019 技术峰会参会记录">
-<meta property="og:url" content="http://www.kilii.cc/2019/08/12/PHPCon2019-参会记录/index.html">
+<meta property="og:title" content="Mysql 基础相关知识整理（-）">
+<meta property="og:url" content="http://www.kilii.cc/2019/08/13/Mysql-索引相关知识整理-一/index.html">
 <meta property="og:site_name" content="Kilii&#39;s Blog">
-<meta property="og:description" content="2019年8月10号至11号 PHPCon2019 在上海举行了，这几天台风利奇马来袭，在江浙沪破坏。气候恶劣，飞机高铁的航班接连取消，但这样也没有难道PHPer的热情，当天会场的参会人数还是非常多。 这是我第一次参加的技术峰会，虽然顶着台风来到上海，累也辛苦。但这次参会听到了许多大佬的演讲，还认识了新的朋友，收获巨大。 在此记录一下会议的一些内容，以及一些个人理解。">
+<meta property="og:description" content="为啥写这篇文章呢？这些知识都比较浅，可能人人都知道，含金量不高。但是作为一名程序员，工作这么久，学到的东西肯定很杂乱。梳理知识也是非常重要的一个学习方式。一定要打好基础呀～～！ 基础概念目录整理">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-08-12T10:18:17.446Z">
+<meta property="og:updated_time" content="2019-08-14T11:11:54.895Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我的 PHPCon2019 技术峰会参会记录">
-<meta name="twitter:description" content="2019年8月10号至11号 PHPCon2019 在上海举行了，这几天台风利奇马来袭，在江浙沪破坏。气候恶劣，飞机高铁的航班接连取消，但这样也没有难道PHPer的热情，当天会场的参会人数还是非常多。 这是我第一次参加的技术峰会，虽然顶着台风来到上海，累也辛苦。但这次参会听到了许多大佬的演讲，还认识了新的朋友，收获巨大。 在此记录一下会议的一些内容，以及一些个人理解。">
+<meta name="twitter:title" content="Mysql 基础相关知识整理（-）">
+<meta name="twitter:description" content="为啥写这篇文章呢？这些知识都比较浅，可能人人都知道，含金量不高。但是作为一名程序员，工作这么久，学到的东西肯定很杂乱。梳理知识也是非常重要的一个学习方式。一定要打好基础呀～～！ 基础概念目录整理">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://www.kilii.cc/2019/08/12/PHPCon2019-参会记录/">
+  <link rel="canonical" href="http://www.kilii.cc/2019/08/13/Mysql-索引相关知识整理-一/">
 
 
 
 
 
-  <title>我的 PHPCon2019 技术峰会参会记录 | Kilii's Blog</title>
+  <title>Mysql 基础相关知识整理（-） | Kilii's Blog</title>
   
 
 
@@ -263,7 +263,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.kilii.cc/2019/08/12/PHPCon2019-参会记录/">
+    <link itemprop="mainEntityOfPage" href="http://www.kilii.cc/2019/08/13/Mysql-索引相关知识整理-一/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="KiLii">
@@ -280,7 +280,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">我的 PHPCon2019 技术峰会参会记录</h1>
+          <h1 class="post-title" itemprop="name headline">Mysql 基础相关知识整理（-）</h1>
         
 
         <div class="post-meta">
@@ -292,8 +292,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-08-12T15:44:59+08:00">
-                2019-08-12
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-08-13T15:05:55+08:00">
+                2019-08-13
               </time>
             
 
@@ -330,98 +330,70 @@
       
 
       
-        <p>2019年8月10号至11号 PHPCon2019 在上海举行了，这几天台风<code>利奇马</code>来袭，在江浙沪破坏。气候恶劣，飞机高铁的航班接连取消，但这样也没有难道PHPer的热情，当天会场的参会人数还是非常多。</p>
-<p>这是我第一次参加的技术峰会，虽然顶着台风来到上海，累也辛苦。但这次参会听到了许多大佬的演讲，还认识了新的朋友，收获巨大。</p>
-<p>在此记录一下会议的一些内容，以及一些个人理解。</p>
+        <p>为啥写这篇文章呢？这些知识都比较浅，可能人人都知道，含金量不高。但是作为一名程序员，工作这么久，学到的东西肯定很杂乱。梳理知识也是非常重要的一个学习方式。一定要打好基础呀～～！</p>
+<p>基础概念目录整理</p>
 <a id="more"></a>
-<p>此次有介绍了 swoole 的最新特性，还有 Tarsphp 以及 hyperf 框架的信息与介绍。但此次的其实更基调其实更多偏向架构层面。</p>
-<p>在这里先贴一下日程</p>
+<ol>
+<li>悲观锁，乐观锁</li>
+<li>事务</li>
+<li>多版本控制 （mvcc）</li>
+<li>存储引擎</li>
+<li>数据类型</li>
+</ol>
+<h2 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h2><p>一般情况下，数据库是可以被多个程序读取的。所以在很容易出现同一资源，在同一时刻被不同程序读取或修改。这样会导致，程序读取资源有误，或者资源被错误修改等情况。为了解决这个问题，数据库都会提供一个“锁”的机制。</p>
+<p>在 Mysql 中则有两种锁</p>
 <ul>
-<li><p>8 月 10 日程</p>
+<li>读锁（共享锁），被读锁锁定时，允许同一时刻多个程序读取该资源，但不允许写操作</li>
+<li>写锁（排他锁），被写锁锁定是，该资源则不能被其他程序做读写操作</li>
+</ul>
+<p>锁有不同的粒度大小</p>
 <ul>
-<li><p>08:30-09:00 签到入场</p>
-</li>
-<li><p>09:00-09:20 大会开场、抽奖</p>
-</li>
-<li><p>09:30-10:15 Swoole5带PHP走向远方——韩天峰</p>
-</li>
-<li><p>10:30-11:15 微博应对突发流量的一些经验——胡波</p>
-</li>
-<li><p>11:30-12:15 消息服务中台实战——王晶</p>
-</li>
-<li><p>14:00-14:45 拥抱TARS：构建PHP微服务生态——梁晨</p>
-</li>
-<li><p>14:45-15:15 茶歇时间</p>
-</li>
-<li><p>15:15-16:00 PHP常驻进程编程须知——郭新华</p>
-</li>
-<li><p>16:15-17:00 代码解耦之道——黄朝晖</p>
-</li>
-<li><p>17:00-17:10 抽奖</p>
-</li>
+<li>表锁，对整张表做锁定。优点是系统资源开销小，缺点则是并发操作不高</li>
+<li>行锁，对表中的某一行数据加锁。这样一张表内能有多个锁存在，增加了单表支持并发操作数，缺点则是系统开销较大</li>
 </ul>
-</li>
-</ul>
+<h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><p>事务是数据库的高级特性，它可以将多个sql语句，变成一个工作单元。使其操作具有整体性，成功则都所有操作都成功，失败则所有操作都失败。</p>
+<h3 id="事务的四大特性"><a href="#事务的四大特性" class="headerlink" title="事务的四大特性"></a>事务的四大特性</h3><p>所有的事务，都需要满足 <code>ACID</code> 原则</p>
 <ul>
-<li><p>8 月 11 日程</p>
+<li>原子性</li>
+<li>一致性</li>
+<li>隔离性</li>
+<li>持久性</li>
+</ul>
+<h3 id="事务的隔离等级"><a href="#事务的隔离等级" class="headerlink" title="事务的隔离等级"></a>事务的隔离等级</h3><p>那么，提到隔离性，就得讲到隔离级别。隔离级别分为四个等级</p>
 <ul>
-<li><p>09:00-09:20 抽奖</p>
-</li>
-<li><p>09:30-10:15 PHP在2345的业务实践——高旭</p>
-</li>
-<li><p>10:30-11:15 惠新宸的演讲</p>
-</li>
-<li><p>11:30-12:15 圆桌讨论</p>
-</li>
-<li><p>14:00-14:45 破解云原生应用的可观测性——刘征</p>
-</li>
-<li><p>14:45-15:15 茶歇时间</p>
-</li>
-<li><p>15:15-16:00 一个团队的集体学习——陈雷</p>
-</li>
-<li><p>16:15-17:00 聊聊开源的另一面——庄表伟</p>
-</li>
-<li><p>17:00-17:10 抽奖</p>
-</li>
+<li>READ UNCOMMITTED （未提交读）</li>
+<li>READ COMMITED （提交读）</li>
+<li>REPEATABLE READ （可重复读）</li>
+<li>SERIALIZABLE （可串行化）</li>
 </ul>
-</li>
-</ul>
-<p>在这些演讲中我也有比较中意的演讲，也从中学到了一下东西，在这里做一些整理。</p>
-<hr>
-<h2 id="桶哥的“消息中台”"><a href="#桶哥的“消息中台”" class="headerlink" title="桶哥的“消息中台”"></a>桶哥的“消息中台”</h2><p>在这次峰会中，我个人比较感兴趣的是方面，是这几年炒的比较火热的 <code>中台</code> 概念。桶哥在他的演讲中，将他们公司自己实现的 <code>消息中台</code> 作为例子讲解。</p>
-<p>中台在我的理解是</p>
-<blockquote>
-<p>整合后台服务，提供前台调取</p>
-</blockquote>
-<p>在桶哥局的例子中，他们的消息中台，整合了消息推送，sms，应用推送等等所有服务在中台系统里面。并在中台中做了业务逻辑的整合。前端只需直接调取简单的接口，就可以实现许多功能。并且后续可以持续往中台里集成其他功能，对前端后台代码影响降至最低。</p>
-<p>这让人感觉消息中台就像是一个“战舰”， “战舰”里面继承了许许多多的工具武器，工人调取使用。中台就是个强大丰富的“武器库”</p>
-<p>当然中台的也是有缺点的，那就是业务无法复用，以及中台一出问题，所有依赖中台的服务也会出问题。并且中台战略并不适合创业公司，以及中小企业。当然中小企业也可以选择做一个简单的中台，无需做成一个庞然大物，这样也可以节约成本。毕竟 ROI 才是一个公司最重要的指标嘛。</p>
-<p>然后展示了他们消息中台的架构图。对做了解析，在此我就不做过多解析。</p>
-<p>另外桶哥也提了下他们的消息中台，是使用 swoole 实现的。据桶哥叙述，他们使用swoole实现的消息推送，能达到单台机器有 240w 的连接处理能力。</p>
-<blockquote>
-<p>Tips：我们知道在以往的版本中 swoole 是有 100w 连接限制的。这里他们是使用了linux的多用户以及systemd的方案完成单台 240w 连接的成果。 当然现在的版本已经无限制了。但是有需要的朋友和以尝试一下。</p>
-</blockquote>
-<h2 id="云原生应用的可观测性"><a href="#云原生应用的可观测性" class="headerlink" title="云原生应用的可观测性"></a>云原生应用的可观测性</h2><p>第一次看到这个标题的时候一时间都没看懂什么意思。知道后面才稍微清楚讲的是什么。</p>
-<p>演讲人刘征是 elastic 的布道师。在他的演讲中他指出，现如今的架构演变已经从<code>单体架构</code>转向<code>微服务</code>。将一个应用拆成多个服务，让其模块化，容器化，这样能保证开发和部署的方便。</p>
-<p>但是当容器多了以后运维与维护的问题则摆到了面前。我们可以想像，在实际业务运行中，各个容器的依赖肯定是非常复杂的，常常是一个服务依赖多个服务，多个服务又依赖一个服务。还有可能出现链式的服务调用，在这种情况下，如果线上出现了bug该如何快速定位？这就是一个很显然的问题。</p>
-<p>演讲人指出，要解决这个问题需要三大支柱</p>
+<p>不同的级别可能会出现不同的错误现象</p>
 <ul>
-<li>日志  —— 是对记录日志的规范，以及日志的搜集。</li>
-<li>监控  —— 是对容器状态的监控</li>
-<li>APM  —— 对容器调用链路的监控</li>
+<li>脏读：未提交的事务所做的修改，对其他事务可见。当其他读取该事务修改后，该事务失败数据回滚，则出现脏读。</li>
+<li>不可重复读：一般在提交读级别中出现，由于事务锁修改的，在提交前与提交后会不一样，可能会导致两次查询中得到不同结果。</li>
+<li>幻读：当某个事务在读取某个范围内的记录时，其他事务插入了一条新纪录。前面的事务在此读取该范围是则会出现幻行，也就是说，两次查询数据条数不等。</li>
 </ul>
-<p>达到这三样标准，即可达到快速且准确的定位问题，实现服务的可观测性。</p>
-<p>然后推荐了一些相关的工具 例如</p>
+<p>隔离级别|脏读可能|不可重复读可能|幻读可能|加锁读<br>-|    -|     -|           -|      -|    -<br>未提交读|yes|yes|yes|no<br>提交读|no|yes|yes|no<br>可重读读|no|no|yes|no<br>可串行化|no|no|no|yes</p>
+<h3 id="什么是死锁"><a href="#什么是死锁" class="headerlink" title="什么是死锁"></a>什么是死锁</h3><p>死锁是两个事务在同一个资源上相互占用而导致的恶性循环现象。而在 Mysql 中的 InnoDB 引擎是有死锁检测和死锁超时机制的</p>
+<p>死锁产生的四大条件</p>
+<ol>
+<li>互斥：每个资源只能被一个进程使用，其它进程请求该资源是只能等待。（就是写锁）</li>
+<li>请求与保持：进程保持了一个资源，但又提出了一个新的资源请求，但该资源被其他进程占有。这是请求被阻塞，但对自己获得的资源保持不放</li>
+<li>不可剥夺：进程获得资源只能由进程自己释放</li>
+<li>循环条件：多个进程形成首尾相接循环等待资源的关系</li>
+</ol>
+<p>预防死锁，只需打破 2,3,4条件即可。</p>
+<h2 id="多版本控制（MVCC）"><a href="#多版本控制（MVCC）" class="headerlink" title="多版本控制（MVCC）"></a>多版本控制（MVCC）</h2><p>innodb 中 mvcc 的实现是通过新增两列，一列保存创建时的事务版本号，另一列保存删除时的事务版本号。实现的一个简单的乐观锁。<a href="https://blog.csdn.net/w2064004678/article/details/83012387" target="_blank" rel="noopener">《Mysql中MVCC的使用及原理详解》</a> 这篇博客中有详细讲解mvcc的实现方式。</p>
+<h2 id="存储引擎"><a href="#存储引擎" class="headerlink" title="存储引擎"></a>存储引擎</h2><p>一般在mysql中较为常见的集中数据库引擎有</p>
 <ul>
-<li>关于日志的 ELK 套件。</li>
-<li>关于容器状态管理的 Prometheus</li>
-<li>关于容器间链路调用追踪的 Zipkin</li>
+<li>InnoDB</li>
+<li>MyISAM</li>
+<li>Archve</li>
+<li>Memory</li>
+<li>NDB 集群</li>
 </ul>
-<p>虽然此次演讲主要面向的群体是架构师层次的程序员，但在这个演讲中我也更深刻的理解了微服务架构的概念，以及如何构建一个健壮的微服务架构系统，所获颇多。</p>
-<h2 id="待续…"><a href="#待续…" class="headerlink" title="待续…"></a>待续…</h2><p>短短两天一堆高质量的信息进入脑袋，一时回忆不过来。先暂时就记录这么多，其他的后面在继续。</p>
-<p>另外，本次参加大会真的是一次很奇妙的体验，与大神面对面接触，感受到了技术氛围。听鸟哥讲php社区生态，php jit的开发进度，还有p++的一些边角新闻，还是非常有意思的。</p>
-<p>（最主要的是，我还蹭到了鸟哥的微信好友位哈哈哈～～～～～～～～～）</p>
-<p>嗯，希望有一天我也能成为大神，站在台上给大家分享一些我所知道的东西！</p>
+<p>而这里面考的最多的就是 InnoDB MyISAM 这两种了。其中区别有是否支持事务，锁粒度，索引实现不同（是否为聚簇索引）。</p>
+<p>另外网上其他博客也说MyISAM支持全文索引，InnoDB不支持。事实上在mysql 5.6+后 InnoDB 已经支持了全文索引</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>关于 MySQL 的部分知识，先写到这。还有关于索引的知识，放到下篇再讲</p>
 
       
     </div>
@@ -437,14 +409,6 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/PHPCon/" rel="tag"># PHPCon</a>
-          
-            <a href="/tags/随笔/" rel="tag"># 随笔</a>
-          
-        </div>
-      
 
       
       
@@ -454,8 +418,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/07/14/Swoft-框架源码阅读-二/" rel="next" title="Swoft 框架源码阅读(二): AnnotationProcess 做了那些事儿">
-                <i class="fa fa-chevron-left"></i> Swoft 框架源码阅读(二): AnnotationProcess 做了那些事儿
+              <a href="/2019/08/12/PHPCon2019-参会记录/" rel="next" title="我的 PHPCon2019 技术峰会参会记录">
+                <i class="fa fa-chevron-left"></i> 我的 PHPCon2019 技术峰会参会记录
               </a>
             
           </div>
@@ -463,10 +427,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/08/13/Mysql-索引相关知识整理-一/" rel="prev" title="Mysql 基础相关知识整理（-）">
-                Mysql 基础相关知识整理（-） <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -591,7 +551,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#桶哥的“消息中台”"><span class="nav-number">1.</span> <span class="nav-text">桶哥的“消息中台”</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#云原生应用的可观测性"><span class="nav-number">2.</span> <span class="nav-text">云原生应用的可观测性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#待续…"><span class="nav-number">3.</span> <span class="nav-text">待续…</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#锁"><span class="nav-number">1.</span> <span class="nav-text">锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事务"><span class="nav-number">2.</span> <span class="nav-text">事务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#事务的四大特性"><span class="nav-number">2.1.</span> <span class="nav-text">事务的四大特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#事务的隔离等级"><span class="nav-number">2.2.</span> <span class="nav-text">事务的隔离等级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是死锁"><span class="nav-number">2.3.</span> <span class="nav-text">什么是死锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多版本控制（MVCC）"><span class="nav-number">3.</span> <span class="nav-text">多版本控制（MVCC）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#存储引擎"><span class="nav-number">4.</span> <span class="nav-text">存储引擎</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最后"><span class="nav-number">5.</span> <span class="nav-text">最后</span></a></li></ol></div>
             
 
           </div>
