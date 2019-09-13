@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="为啥写这篇文章呢？这些知识都比较浅，可能人人都知道，含金量不高。但是作为一名程序员，工作这么久，学到的东西肯定很杂乱。梳理知识也是非常重要的一个学习方式。一定要打好基础呀～～！ 基础概念目录整理">
+<meta name="description" content="安装起步试验环境：  操作系统 CentOS 7.6 安装 jdk 8 环境 Jenkins包">
 <meta name="keywords" content="PHP,web,个人博客,生活,音乐,随笔">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Mysql 基础相关知识整理（-）">
-<meta property="og:url" content="http://www.kilii.cc/2019/08/13/Mysql-索引相关知识整理-一/index.html">
+<meta property="og:title" content="Jenkins 部署Go工程编译流水线">
+<meta property="og:url" content="http://www.kilii.cc/2019/09/13/Jenkins-部署Go工程编译流水线/index.html">
 <meta property="og:site_name" content="Kilii&#39;s Blog">
-<meta property="og:description" content="为啥写这篇文章呢？这些知识都比较浅，可能人人都知道，含金量不高。但是作为一名程序员，工作这么久，学到的东西肯定很杂乱。梳理知识也是非常重要的一个学习方式。一定要打好基础呀～～！ 基础概念目录整理">
+<meta property="og:description" content="安装起步试验环境：  操作系统 CentOS 7.6 安装 jdk 8 环境 Jenkins包">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-08-14T11:11:54.895Z">
+<meta property="og:updated_time" content="2019-09-13T04:22:44.639Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Mysql 基础相关知识整理（-）">
-<meta name="twitter:description" content="为啥写这篇文章呢？这些知识都比较浅，可能人人都知道，含金量不高。但是作为一名程序员，工作这么久，学到的东西肯定很杂乱。梳理知识也是非常重要的一个学习方式。一定要打好基础呀～～！ 基础概念目录整理">
+<meta name="twitter:title" content="Jenkins 部署Go工程编译流水线">
+<meta name="twitter:description" content="安装起步试验环境：  操作系统 CentOS 7.6 安装 jdk 8 环境 Jenkins包">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://www.kilii.cc/2019/08/13/Mysql-索引相关知识整理-一/">
+  <link rel="canonical" href="http://www.kilii.cc/2019/09/13/Jenkins-部署Go工程编译流水线/">
 
 
 
 
 
-  <title>Mysql 基础相关知识整理（-） | Kilii's Blog</title>
+  <title>Jenkins 部署Go工程编译流水线 | Kilii's Blog</title>
   
 
 
@@ -263,7 +263,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.kilii.cc/2019/08/13/Mysql-索引相关知识整理-一/">
+    <link itemprop="mainEntityOfPage" href="http://www.kilii.cc/2019/09/13/Jenkins-部署Go工程编译流水线/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="KiLii">
@@ -280,7 +280,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Mysql 基础相关知识整理（-）</h1>
+          <h1 class="post-title" itemprop="name headline">Jenkins 部署Go工程编译流水线</h1>
         
 
         <div class="post-meta">
@@ -292,8 +292,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-08-13T15:05:55+08:00">
-                2019-08-13
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-13T12:14:14+08:00">
+                2019-09-13
               </time>
             
 
@@ -330,70 +330,67 @@
       
 
       
-        <p>为啥写这篇文章呢？这些知识都比较浅，可能人人都知道，含金量不高。但是作为一名程序员，工作这么久，学到的东西肯定很杂乱。梳理知识也是非常重要的一个学习方式。一定要打好基础呀～～！</p>
-<p>基础概念目录整理</p>
+        <h2 id="安装起步"><a href="#安装起步" class="headerlink" title="安装起步"></a>安装起步</h2><p>试验环境：</p>
+<ul>
+<li>操作系统 CentOS 7.6</li>
+<li>安装 jdk 8 环境</li>
+<li><a href="http://mirrors.jenkins.io/war-stable/latest/jenkins.war" target="_blank" rel="noopener">Jenkins包</a></li>
+</ul>
 <a id="more"></a>
-<ol>
-<li>悲观锁，乐观锁</li>
-<li>事务</li>
-<li>多版本控制 （mvcc）</li>
-<li>存储引擎</li>
-<li>数据类型</li>
-</ol>
-<h2 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h2><p>一般情况下，数据库是可以被多个程序读取的。所以在很容易出现同一资源，在同一时刻被不同程序读取或修改。这样会导致，程序读取资源有误，或者资源被错误修改等情况。为了解决这个问题，数据库都会提供一个“锁”的机制。</p>
-<p>在 Mysql 中则有两种锁</p>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 安装 jdk 8 环境</span><br><span class="line">yum install java-1.8.0-openjdk-debug.x86_64</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">cd /usr/local/src # 本次操作我们将jenkins包放在该目录下</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 下载 Jenkins.war</span><br><span class="line">curl -O http://mirrors.jenkins.io/war-stable/latest/jenkins.war</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 指定运行端口 8080 并启动</span><br><span class="line">java -jar jenkins.war --httpPort=8080</span><br></pre></td></tr></table></figure>
+
+<p>之后jenkins的后台管理服务启动完成之后，访问CentOS主机地址的8080端口即可看到管理页面，按照操作流程走，选择安装推荐插件即可完成配置。</p>
+<blockquote>
+<p>Tips:此处安装插件可能会有一些小问题</p>
+</blockquote>
+<hr>
+<h2 id="配置Go环境"><a href="#配置Go环境" class="headerlink" title="配置Go环境"></a>配置Go环境</h2><p>jenkins功能强大，可以完成各种功能。主要是因为jenkins社区中有许多插件，通过不通插件的。所以在构建Go的编译环境时首先要下载一些插件。</p>
 <ul>
-<li>读锁（共享锁），被读锁锁定时，允许同一时刻多个程序读取该资源，但不允许写操作</li>
-<li>写锁（排他锁），被写锁锁定是，该资源则不能被其他程序做读写操作</li>
+<li>Go Plugin(有的可能直接叫 Go)</li>
 </ul>
-<p>锁有不同的粒度大小</p>
+<p>插件可以在<a href="https://plugins.jenkins.io/" target="_blank" rel="noopener">插件官网</a>，或者直接在后台面板安装。这里推荐直接在后台面板安装。</p>
+<p>安装完成后到 Manage Jenkins(系统配置) =&gt; Global Tool Configuration(全局工具配置) 页面下，找到Go一栏。</p>
+<p>这里是配置Go的编译环境，支持多版本。点击安装Go环境选项，选择Go的版本，填写一个别名，建议带版本号，后续编译的时候，选择的版本更清晰。(这里也有其他的安装方式，如压缩包等等)</p>
+<p>填写完成后保存，该环境会在第一个构建项目时，加载到<code>.jenkins/tool/</code> 文件夹下。</p>
+<h2 id="创建-Job"><a href="#创建-Job" class="headerlink" title="创建 Job"></a>创建 Job</h2><p>回到首页，点击 new item(新建任务)。创建一个自由风格的项目(freestyle project)。</p>
+<p>进入配置页面，在 Source Code Management(源码管理)，一栏选择代码管理方式。由于我们使用的是git，所以本文主讲git配置</p>
 <ul>
-<li>表锁，对整张表做锁定。优点是系统资源开销小，缺点则是并发操作不高</li>
-<li>行锁，对表中的某一行数据加锁。这样一张表内能有多个锁存在，增加了单表支持并发操作数，缺点则是系统开销较大</li>
+<li><p>Repository URL 填写项目地址</p>
+</li>
+<li><p>Credentials 如果需要认证，则可以点击旁边的<code>add</code>按钮,添加一组账号密码，用于访问仓库，也可以通过直接添加 ssh 公钥直接访问。jenkins 会有直接提示，如果无法访问仓库，会在 <code>Repository URL</code> 一栏下报错</p>
+</li>
+<li><p>Branches to build 则是代码分支，jenkins会根据这里填写的参数，去拉取相关分支代码来构建。</p>
+</li>
+<li><p>Additional Behaviours 一栏中添加一个<br><code>Check out to a sub-directory</code> 这个可以指定代码拉取到服务器的指定文件地址。这里我使用<code>/home/code/go/src/project_name</code></p>
+</li>
 </ul>
-<h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><p>事务是数据库的高级特性，它可以将多个sql语句，变成一个工作单元。使其操作具有整体性，成功则都所有操作都成功，失败则所有操作都失败。</p>
-<h3 id="事务的四大特性"><a href="#事务的四大特性" class="headerlink" title="事务的四大特性"></a>事务的四大特性</h3><p>所有的事务，都需要满足 <code>ACID</code> 原则</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> /home/code/go 文件夹下目录结构</span><br><span class="line">.</span><br><span class="line">├── bin</span><br><span class="line">├── pkg</span><br><span class="line">└── src</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 编译过Go的知道，为什么要这个目录结构-_-</span><br></pre></td></tr></table></figure>
+
 <ul>
-<li>原子性</li>
-<li>一致性</li>
-<li>隔离性</li>
-<li>持久性</li>
+<li><p>Build Triggers(构建触发器)，该选项则是确定何时出发jenkins构建任务。这里我们选择 GitHub hook trigger for GITScm polling, 代表每次git提交，都会执行一次构建</p>
+</li>
+<li><p>Build Environment(构建环境)，由于我们是 Go 的编译所以选择 <code>Set up Go programming language tools</code>项。选中后弹出一个 <code>Go version</code> 选择。这里出现的选项，是之前在配置 Go 环境的时候新增的别名。</p>
+</li>
+<li><p>Build(构建)，这里点击Add Build step，添加一个 Excute shell 步骤。这样我们可以直接在弹出的框里面写shell脚本来操作编译</p>
+</li>
 </ul>
-<h3 id="事务的隔离等级"><a href="#事务的隔离等级" class="headerlink" title="事务的隔离等级"></a>事务的隔离等级</h3><p>那么，提到隔离性，就得讲到隔离级别。隔离级别分为四个等级</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">export GOPATH=/home/kilii/code/go</span><br><span class="line"></span><br><span class="line">go version</span><br><span class="line"></span><br><span class="line">cd $GOPATH/src/project_name &amp;&amp; go get -d -v ./... &amp;&amp; (go install || go build)</span><br></pre></td></tr></table></figure>
+
+<p>然后保存结果，到这里整个构建脚本就写好了。</p>
+<h2 id="执行构建"><a href="#执行构建" class="headerlink" title="执行构建"></a>执行构建</h2><p>回到首页，点击条目中最右侧的小闹钟，即可手动开始构建。</p>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>经过上面一套流程，如果还是有点混乱不明白的朋友，我们可以重新梳理一下。根据上文描述，我们可以大致分为四个步骤</p>
 <ul>
-<li>READ UNCOMMITTED （未提交读）</li>
-<li>READ COMMITED （提交读）</li>
-<li>REPEATABLE READ （可重复读）</li>
-<li>SERIALIZABLE （可串行化）</li>
+<li>编译环境</li>
+<li>设置代码仓库</li>
+<li>设置触发机制</li>
+<li>编写构建步骤</li>
 </ul>
-<p>不同的级别可能会出现不同的错误现象</p>
-<ul>
-<li>脏读：未提交的事务所做的修改，对其他事务可见。当其他读取该事务修改后，该事务失败数据回滚，则出现脏读。</li>
-<li>不可重复读：一般在提交读级别中出现，由于事务锁修改的，在提交前与提交后会不一样，可能会导致两次查询中得到不同结果。</li>
-<li>幻读：当某个事务在读取某个范围内的记录时，其他事务插入了一条新纪录。前面的事务在此读取该范围是则会出现幻行，也就是说，两次查询数据条数不等。</li>
-</ul>
-<p>隔离级别|脏读可能|不可重复读可能|幻读可能|加锁读<br>-|    -|     -|           -|      -|    -<br>未提交读|yes|yes|yes|no<br>提交读|no|yes|yes|no<br>可重读读|no|no|yes|no<br>可串行化|no|no|no|yes</p>
-<h3 id="什么是死锁"><a href="#什么是死锁" class="headerlink" title="什么是死锁"></a>什么是死锁</h3><p>死锁是两个事务在同一个资源上相互占用而导致的恶性循环现象。而在 Mysql 中的 InnoDB 引擎是有死锁检测和死锁超时机制的</p>
-<p>死锁产生的四大条件</p>
-<ol>
-<li>互斥：每个资源只能被一个进程使用，其它进程请求该资源是只能等待。（就是写锁）</li>
-<li>请求与保持：进程保持了一个资源，但又提出了一个新的资源请求，但该资源被其他进程占有。这是请求被阻塞，但对自己获得的资源保持不放</li>
-<li>不可剥夺：进程获得资源只能由进程自己释放</li>
-<li>循环条件：多个进程形成首尾相接循环等待资源的关系</li>
-</ol>
-<p>预防死锁，只需打破 2,3,4条件即可。</p>
-<h2 id="多版本控制（MVCC）"><a href="#多版本控制（MVCC）" class="headerlink" title="多版本控制（MVCC）"></a>多版本控制（MVCC）</h2><p>innodb 中 mvcc 的实现是通过新增两列，一列保存创建时的事务版本号，另一列保存删除时的事务版本号。实现的一个简单的乐观锁。<a href="https://blog.csdn.net/w2064004678/article/details/83012387" target="_blank" rel="noopener">《Mysql中MVCC的使用及原理详解》</a> 这篇博客中有详细讲解mvcc的实现方式。</p>
-<h2 id="存储引擎"><a href="#存储引擎" class="headerlink" title="存储引擎"></a>存储引擎</h2><p>一般在mysql中较为常见的集中数据库引擎有</p>
-<ul>
-<li>InnoDB</li>
-<li>MyISAM</li>
-<li>Archve</li>
-<li>Memory</li>
-<li>NDB 集群</li>
-</ul>
-<p>而这里面考的最多的就是 InnoDB MyISAM 这两种了。其中区别有是否支持事务，锁粒度，索引实现不同（是否为聚簇索引）。</p>
-<p>另外网上其他博客也说MyISAM支持全文索引，InnoDB不支持。事实上在mysql 5.6+后 InnoDB 已经支持了全文索引</p>
-<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>关于 MySQL 的部分知识，先写到这。还有关于索引的知识，放到下篇再讲</p>
+<p>其中编译环境有两种方式构建，一是自己在机器上安装搭建，二是使用相关插件。</p>
+<p>设置代码仓库和触发机制没啥可说的。基本上按提示来就可以了。</p>
+<p>最后编写构建步骤，其实就是写 <code>shell</code>脚本。而且，整体下来其实就是可以看作是写<code>shell</code>,这样想来是不是简单了很多呢？</p>
+<p>如果这一块还不是太懂的同学，得好好补补<code>linux</code> 和 <code>shell</code> 相关的知识了。这是非常重要知识，所有做后端，做服务器，运维的人，需要了解的并掌握东西。</p>
 
       
     </div>
@@ -418,8 +415,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/08/12/PHPCon2019-参会记录/" rel="next" title="我的 PHPCon2019 技术峰会参会记录">
-                <i class="fa fa-chevron-left"></i> 我的 PHPCon2019 技术峰会参会记录
+              <a href="/2019/08/13/Mysql-索引相关知识整理-一/" rel="next" title="Mysql 基础相关知识整理（-）">
+                <i class="fa fa-chevron-left"></i> Mysql 基础相关知识整理（-）
               </a>
             
           </div>
@@ -427,10 +424,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/09/13/Jenkins-部署Go工程编译流水线/" rel="prev" title="Jenkins 部署Go工程编译流水线">
-                Jenkins 部署Go工程编译流水线 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -565,7 +558,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#锁"><span class="nav-number">1.</span> <span class="nav-text">锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事务"><span class="nav-number">2.</span> <span class="nav-text">事务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#事务的四大特性"><span class="nav-number">2.1.</span> <span class="nav-text">事务的四大特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#事务的隔离等级"><span class="nav-number">2.2.</span> <span class="nav-text">事务的隔离等级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是死锁"><span class="nav-number">2.3.</span> <span class="nav-text">什么是死锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多版本控制（MVCC）"><span class="nav-number">3.</span> <span class="nav-text">多版本控制（MVCC）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#存储引擎"><span class="nav-number">4.</span> <span class="nav-text">存储引擎</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最后"><span class="nav-number">5.</span> <span class="nav-text">最后</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装起步"><span class="nav-number">1.</span> <span class="nav-text">安装起步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置Go环境"><span class="nav-number">2.</span> <span class="nav-text">配置Go环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建-Job"><span class="nav-number">3.</span> <span class="nav-text">创建 Job</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#执行构建"><span class="nav-number">4.</span> <span class="nav-text">执行构建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>
