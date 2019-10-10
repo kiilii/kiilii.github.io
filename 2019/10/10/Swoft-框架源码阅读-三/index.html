@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="swoft,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="上一篇解读完了关于 AnnotationProcess 这个对象初始化时所做的处理,大致为收集所有的需要加载,并含有注解的类.并解析,分类,映射成一个map然后存入AnnotationRegister中的静态变量中. 那么这次讲解的 BeanProcess 内容有点儿长,分为几个部分讲解完毕">
+<meta name="keywords" content="swoft">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swoft 框架源码阅读(三)">
+<meta property="og:url" content="http://www.kilii.cc/2019/10/10/Swoft-框架源码阅读-三/index.html">
+<meta property="og:site_name" content="KiLii&#39;s Blog">
+<meta property="og:description" content="上一篇解读完了关于 AnnotationProcess 这个对象初始化时所做的处理,大致为收集所有的需要加载,并含有注解的类.并解析,分类,映射成一个map然后存入AnnotationRegister中的静态变量中. 那么这次讲解的 BeanProcess 内容有点儿长,分为几个部分讲解完毕">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-10-10T15:30:41.886Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Swoft 框架源码阅读(三)">
+<meta name="twitter:description" content="上一篇解读完了关于 AnnotationProcess 这个对象初始化时所做的处理,大致为收集所有的需要加载,并含有注解的类.并解析,分类,映射成一个map然后存入AnnotationRegister中的静态变量中. 那么这次讲解的 BeanProcess 内容有点儿长,分为几个部分讲解完毕">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.kilii.cc/2019/10/10/Swoft-框架源码阅读-三/">
+
+
+
+
+
+  <title>Swoft 框架源码阅读(三) | KiLii's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">KiLii's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            Sitemap
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.kilii.cc/2019/10/10/Swoft-框架源码阅读-三/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="KiLii">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://tvax2.sinaimg.cn/crop.0.0.768.768.180/007SrMzyly8g50vbpf13cj30lc0lcq41.jpg?KID=imgbed,tva&Expires=1568359938&ssig=2V1QoZH0BP">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="KiLii's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Swoft 框架源码阅读(三)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-10T23:30:41+08:00">
+                2019-10-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>上一篇解读完了关于 <code>AnnotationProcess</code> 这个对象初始化时所做的处理,大致为收集所有的需要加载,并含有注解的类.并解析,分类,映射成一个<code>map</code>然后存入<code>AnnotationRegister</code>中的静态变量中.</p>
+<p>那么这次讲解的 <code>BeanProcess</code> 内容有点儿长,分为几个部分讲解完毕</p>
+<a id="more"></a>
+
+<h2 id="BeanProcess-概述"><a href="#BeanProcess-概述" class="headerlink" title="BeanProcess 概述"></a>BeanProcess 概述</h2><p><code>BeanProcess</code> 文件地址在 <code>swoft/framework/src/Processor/BeanProcessor.php</code>.主要运行内容</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">handle</span><span class="params">()</span>: <span class="title">bool</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// ....</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 相关处理的类</span></span><br><span class="line">    $handler     = <span class="keyword">new</span> BeanHandler();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取所有配置</span></span><br><span class="line">    $definitions = <span class="keyword">$this</span>-&gt;getDefinitions();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取所有定义过的注释解析类. 也就是每个组件里边都有的 Annotation 文件夹</span></span><br><span class="line">    <span class="comment">// 里的 parsers, 他们同来定义自己的注解</span></span><br><span class="line">    $parsers     = AnnotationRegister::getParsers();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取所有含有注解的类的映射</span></span><br><span class="line">    $annotations = AnnotationRegister::getAnnotations();</span><br><span class="line"></span><br><span class="line">    BeanFactory::addDefinitions($definitions);</span><br><span class="line">    BeanFactory::addAnnotations($annotations);</span><br><span class="line">    BeanFactory::addParsers($parsers);</span><br><span class="line">    BeanFactory::setHandler($handler);</span><br><span class="line">    BeanFactory::init();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ....</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从上面我们可以看出,程序从 <code>AnnotationRegister</code> 获取之前已收集好的类的相关描述,并注入可一个处理类,然后开始了程序的初始化.</p>
+<p>根据IDE的跳转提示我们可以知道 <code>init</code> 实际上是调用了一个单例模式的 <code>Contrainer</code>, 并做了初始化.</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">init</span><span class="params">()</span>: <span class="title">void</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Parse annotations</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;parseAnnotations();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Parse definitions</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;parseDefinitions();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Init beans</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;initializeBeans();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>初始化分为三步</p>
+<h3 id="parseAnnotations"><a href="#parseAnnotations" class="headerlink" title="parseAnnotations"></a>parseAnnotations</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">parseAnnotations</span><span class="params">()</span>: <span class="title">void</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $annotationParser = <span class="keyword">new</span> AnnotationObjParser(</span><br><span class="line">        <span class="keyword">$this</span>-&gt;definitions, <span class="keyword">$this</span>-&gt;objectDefinitions, <span class="keyword">$this</span>-&gt;classNames, <span class="keyword">$this</span>-&gt;aliases</span><br><span class="line">    );</span><br><span class="line">    $annotationData   = $annotationParser-&gt;parseAnnotations(<span class="keyword">$this</span>-&gt;annotations, <span class="keyword">$this</span>-&gt;parsers);</span><br><span class="line"></span><br><span class="line">    [<span class="keyword">$this</span>-&gt;definitions, <span class="keyword">$this</span>-&gt;objectDefinitions, <span class="keyword">$this</span>-&gt;classNames, <span class="keyword">$this</span>-&gt;aliases] = $annotationData;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它调用了 <code>AnnotationObjParser</code>的方法,并重新对传入参数做了赋值</p>
+<p>但此时只有 <code>definitions</code> 有值,打印之后则会发现 <code>definitions</code> 的值是<code>config</code> 中的所有配置.其余都为空数组.</p>
+<p>那么 <code>parseAnnotations()</code> 方法对各个类，方法，属性上的注解完成解析，并映射成了一个数组的形式。根据追踪,我们可以看到函数实际执行的代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">parseOneClassAnnotations</span><span class="params">(string $className, array $classOneAnnotations)</span>: <span class="title">void</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Check class annotation tag</span></span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">isset</span>($classOneAnnotations[<span class="string">'annotation'</span>])) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> AnnotationException(</span><br><span class="line">            sprintf(<span class="string">'Property or method(%s) with `@xxx` must be define class annotation'</span>, $className)</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Parse class annotations</span></span><br><span class="line">    $classAnnotations = $classOneAnnotations[<span class="string">'annotation'</span>];</span><br><span class="line">    $reflectionClass  = $classOneAnnotations[<span class="string">'reflection'</span>];</span><br><span class="line"></span><br><span class="line">    $classAry = [</span><br><span class="line">        $className,</span><br><span class="line">        $reflectionClass,</span><br><span class="line">        $classAnnotations</span><br><span class="line">    ];</span><br><span class="line"></span><br><span class="line">    $objectDefinition = <span class="keyword">$this</span>-&gt;parseClassAnnotations($classAry);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 解析 property 注解</span></span><br><span class="line">    $propertyInjects        = [];</span><br><span class="line">    $propertyAllAnnotations = $classOneAnnotations[<span class="string">'properties'</span>] ?? [];</span><br><span class="line">    <span class="keyword">foreach</span> ($propertyAllAnnotations <span class="keyword">as</span> $propertyName =&gt; $propertyOneAnnotations) &#123;</span><br><span class="line">        $proAnnotations = $propertyOneAnnotations[<span class="string">'annotation'</span>] ?? [];</span><br><span class="line">        $propertyInject = <span class="keyword">$this</span>-&gt;parsePropertyAnnotations($classAry, $propertyName, $proAnnotations);</span><br><span class="line">        <span class="keyword">if</span> ($propertyInject) &#123;</span><br><span class="line">            $propertyInjects[$propertyName] = $propertyInject;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 解析 method 注解</span></span><br><span class="line">    $methodInjects        = [];</span><br><span class="line">    $methodAllAnnotations = $classOneAnnotations[<span class="string">'methods'</span>] ?? [];</span><br><span class="line">    <span class="keyword">foreach</span> ($methodAllAnnotations <span class="keyword">as</span> $methodName =&gt; $methodOneAnnotations) &#123;</span><br><span class="line">        $methodAnnotations = $methodOneAnnotations[<span class="string">'annotation'</span>] ?? [];</span><br><span class="line"></span><br><span class="line">        $methodInject = <span class="keyword">$this</span>-&gt;parseMethodAnnotations($classAry, $methodName, $methodAnnotations);</span><br><span class="line">        <span class="keyword">if</span> ($methodInject) &#123;</span><br><span class="line">            $methodInjects[$methodName] = $methodInject;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!$objectDefinition) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">empty</span>($propertyInjects)) &#123;</span><br><span class="line">        $objectDefinition-&gt;setPropertyInjections($propertyInjects);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">empty</span>($methodInjects)) &#123;</span><br><span class="line">        $objectDefinition-&gt;setMethodInjections($methodInjects);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Object definition and class name</span></span><br><span class="line">    $name         = $objectDefinition-&gt;getName();</span><br><span class="line">    $aliase       = $objectDefinition-&gt;getAlias();</span><br><span class="line">    $classNames   = <span class="keyword">$this</span>-&gt;classNames[$className] ?? [];</span><br><span class="line">    $classNames[] = $name;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">$this</span>-&gt;classNames[$className]   = array_unique($classNames);</span><br><span class="line">    <span class="keyword">$this</span>-&gt;objectDefinitions[$name] = $objectDefinition;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">empty</span>($aliase)) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;aliases[$aliase] = $name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实际相关代码太长,这里就不一一贴出了</p>
+<p>在了解这个方法作用的时候我们先要知道,在swoft中自定义注解需要有两种类文件.在此我们以<code>Aop</code> 组件来讲解.</p>
+<p>组件中 <code>Annotation</code> 文件夹结构如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── Mapping</span><br><span class="line">│   ├── After.php</span><br><span class="line">│   ├── AfterReturning.php</span><br><span class="line">│   ├── AfterThrowing.php</span><br><span class="line">│   ├── Around.php</span><br><span class="line">│   ├── Aspect.php</span><br><span class="line">│   ├── Before.php</span><br><span class="line">│   ├── PointAnnotation.php</span><br><span class="line">│   ├── PointBean.php</span><br><span class="line">│   └── PointExecution.php</span><br><span class="line">└── Parser</span><br><span class="line">    ├── AfterParser.php</span><br><span class="line">    ├── AfterReturningParser.php</span><br><span class="line">    ├── AfterThrowingParser.php</span><br><span class="line">    ├── AroundParser.php</span><br><span class="line">    ├── AspectParser.php</span><br><span class="line">    ├── BeforeParser.php</span><br><span class="line">    ├── PointAnnotationParser.php</span><br><span class="line">    ├── PointBeanParser.php</span><br><span class="line">    └── PointExecutionParser.php</span><br></pre></td></tr></table></figure>
+
+<p>Mapping 文件夹内的类则是对注解定义,定义其名字,注解类型,所含参数.总的来说是对注解的一个<code>描述</code></p>
+<p>Parser 文件夹内的文件则是对 Mapping 文件夹里注解的一个解析. </p>
+<h3 id="parseDefinitions"><a href="#parseDefinitions" class="headerlink" title="parseDefinitions"></a>parseDefinitions</h3><p>而 parseDefinitions 主要职责则是更新配置</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">parseDefinitions</span><span class="params">()</span>: <span class="title">array</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">$this</span>-&gt;definitions <span class="keyword">as</span> $beanName =&gt; $definition) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;objectDefinitions[$beanName])) &#123;</span><br><span class="line">            $objectDefinition = <span class="keyword">$this</span>-&gt;objectDefinitions[$beanName];</span><br><span class="line">            <span class="keyword">$this</span>-&gt;resetObjectDefinition($beanName, $objectDefinition, $definition);</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">$this</span>-&gt;createObjectDefinition($beanName, $definition);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> [<span class="keyword">$this</span>-&gt;definitions, <span class="keyword">$this</span>-&gt;objectDefinitions, <span class="keyword">$this</span>-&gt;classNames, <span class="keyword">$this</span>-&gt;aliases];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>objectDefinitions</code> 代表所有已实例化完毕,且完成诸如操作了的对象. 这里的操作则是对该对象的默认配置做更新,或创建操作.</p>
+<h3 id="initializeBeans"><a href="#initializeBeans" class="headerlink" title="initializeBeans"></a>initializeBeans</h3><p><code>initializeBeans</code> 操作则是最核心的一环，它初始化了所有 <code>bean</code>, 并在此完成了所有注解的注入</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">initializeBeans</span><span class="params">()</span>: <span class="title">void</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">/* <span class="doctag">@var</span> ObjectDefinition $objectDefinition */</span></span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">$this</span>-&gt;objectDefinitions <span class="keyword">as</span> $beanName =&gt; $objectDefinition) &#123;</span><br><span class="line">        $scope = $objectDefinition-&gt;getScope();</span><br><span class="line">        <span class="comment">// Exclude request</span></span><br><span class="line">        <span class="keyword">if</span> ($scope === Bean::REQUEST) &#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;requestDefinitions[$beanName] = $objectDefinition;</span><br><span class="line">            <span class="keyword">unset</span>(<span class="keyword">$this</span>-&gt;objectDefinitions[$beanName]);</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Exclude session</span></span><br><span class="line">        <span class="keyword">if</span> ($scope === Bean::SESSION) &#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;sessionDefinitions[$beanName] = $objectDefinition;</span><br><span class="line">            <span class="keyword">unset</span>(<span class="keyword">$this</span>-&gt;objectDefinitions[$beanName]);</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// New bean</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;newBean($beanName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中<code>REQUEST</code>与<code>SESSION</code>是bean的类型，这个会在后续解释。主要操作集中在<code>newBean</code>中</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">newBean</span><span class="params">(string $beanName, string $id = <span class="string">''</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// First, check bean whether has been create.</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;singletonPool[$beanName]) || <span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;prototypePool[$beanName])) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;get($beanName);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get object definition</span></span><br><span class="line">    $objectDefinition = <span class="keyword">$this</span>-&gt;getNewObjectDefinition($beanName);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Before initialize bean</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;beforeInit($beanName, $className, $objectDefinition);</span><br><span class="line"></span><br><span class="line">    $constructArgs   = [];</span><br><span class="line">    $constructInject = $objectDefinition-&gt;getConstructorInjection();</span><br><span class="line">    <span class="keyword">if</span> ($constructInject !== <span class="keyword">null</span>) &#123;</span><br><span class="line">        $constructArgs = <span class="keyword">$this</span>-&gt;getConstructParams($constructInject, $id);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $propertyInjects = $objectDefinition-&gt;getPropertyInjections();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Proxy class</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;handler) &#123;</span><br><span class="line">        $className = <span class="keyword">$this</span>-&gt;handler-&gt;classProxy($className);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $reflectionClass = <span class="keyword">new</span> ReflectionClass($className);</span><br><span class="line">    $reflectObject   = <span class="keyword">$this</span>-&gt;newInstance($reflectionClass, $constructArgs);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Inject properties values</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;newProperty($reflectObject, $reflectionClass, $propertyInjects, $id);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Alias</span></span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">empty</span>($alias)) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;aliases[$alias] = $beanName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Call init method if exist</span></span><br><span class="line">    <span class="keyword">if</span> ($reflectionClass-&gt;hasMethod(<span class="keyword">self</span>::INIT_METHOD)) &#123;</span><br><span class="line">        $reflectObject-&gt;&#123;<span class="keyword">self</span>::INIT_METHOD&#125;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;setNewBean($beanName, $scope, $reflectObject, $id);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此处<code>beforeInit()</code>对每一个bean命名注册，完成了 aop(面向切面) 的初始化。这个点会在后续详细解释。</p>
+<p>接下来就可以看到，程序通过<code>Reflection</code>对每个<code>bean</code>实例化，并对含有<code>Property</code>注解的成员进行注入。接着调用每个<code>bean</code>中的<code>init</code>函数。最后在<code>setNewBean()</code>方法中，根据<code>bean</code>的类型，放入不同的<code>pool</code>中。方便调用。至此完成了所有工作</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><code>BeanProcesseor</code>其实算得上是Swoft的核心要点了。本次解析的代码设计的地方有点多，有些东西没有详细讲解。这些会在后续慢慢讲解。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/swoft/" rel="tag"># swoft</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/13/Jenkins-部署Go工程编译流水线/" rel="next" title="Jenkins 部署Go工程编译流水线">
+                <i class="fa fa-chevron-left"></i> Jenkins 部署Go工程编译流水线
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://tvax2.sinaimg.cn/crop.0.0.768.768.180/007SrMzyly8g50vbpf13cj30lc0lcq41.jpg?KID=imgbed,tva&Expires=1568359938&ssig=2V1QoZH0BP" alt="KiLii">
+            
+              <p class="site-author-name" itemprop="name">KiLii</p>
+              <p class="site-description motion-element" itemprop="description">Kilii的博客，主要分享PHP，web开发等技术相关文章。和对音乐，生活的一些思考</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/kiilii" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#BeanProcess-概述"><span class="nav-number">1.</span> <span class="nav-text">BeanProcess 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#parseAnnotations"><span class="nav-number">1.1.</span> <span class="nav-text">parseAnnotations</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#parseDefinitions"><span class="nav-number">1.2.</span> <span class="nav-text">parseDefinitions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#initializeBeans"><span class="nav-number">1.3.</span> <span class="nav-text">initializeBeans</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">KiLii</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

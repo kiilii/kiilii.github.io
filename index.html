@@ -263,6 +263,131 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.kilii.cc/2019/10/10/Swoft-框架源码阅读-三/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="KiLii">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="https://tvax2.sinaimg.cn/crop.0.0.768.768.180/007SrMzyly8g50vbpf13cj30lc0lcq41.jpg?KID=imgbed,tva&Expires=1568359938&ssig=2V1QoZH0BP">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="KiLii's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/10/10/Swoft-框架源码阅读-三/" itemprop="url">Swoft 框架源码阅读(三)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-10T23:30:41+08:00">
+                2019-10-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>上一篇解读完了关于 <code>AnnotationProcess</code> 这个对象初始化时所做的处理,大致为收集所有的需要加载,并含有注解的类.并解析,分类,映射成一个<code>map</code>然后存入<code>AnnotationRegister</code>中的静态变量中.</p>
+<p>那么这次讲解的 <code>BeanProcess</code> 内容有点儿长,分为几个部分讲解完毕</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/10/10/Swoft-框架源码阅读-三/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://www.kilii.cc/2019/09/13/Jenkins-部署Go工程编译流水线/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1386,131 +1511,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.kilii.cc/2019/06/04/有关Web身份验证与JWT认证探究与实现/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="KiLii">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="https://tvax2.sinaimg.cn/crop.0.0.768.768.180/007SrMzyly8g50vbpf13cj30lc0lcq41.jpg?KID=imgbed,tva&Expires=1568359938&ssig=2V1QoZH0BP">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="KiLii's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/06/04/有关Web身份验证与JWT认证探究与实现/" itemprop="url">有关Web身份验证与JWT认证探究与实现</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-06-04T23:23:13+08:00">
-                2019-06-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>今天上班，群里有朋友问介绍一个好用的AUTH认证第三方类。被人戏称面向框架编成。想想自己，为了成为一个好的架构师，怎么说也要手动实现一下吧</p>
-<h2 id="1、JWT-简述"><a href="#1、JWT-简述" class="headerlink" title="1、JWT 简述"></a>1、JWT 简述</h2><pre><code>JWT全称（JSON Web Token）是一种用于web开发中，用于身份验证的一种机制。</code></pre><p>这里也引用以下<a href="https://tools.ietf.org/html/rfc7519/" title="RFC7519" target="_blank" rel="noopener">RFC7519</a>的定义。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2019/06/04/有关Web身份验证与JWT认证探究与实现/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1563,7 +1563,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
